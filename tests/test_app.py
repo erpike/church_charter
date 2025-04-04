@@ -9,7 +9,7 @@ def test_config():
     """Test configuration that overrides the default config."""
     return {
         "TESTING": True,
-        "DATABASE": {"name": "memory:", "pragmas": {}},
+        "DATABASE": {"name": ":memory:", "pragmas": {}},
         "DEBUG": False,
         # Add any other test-specific configuration here
     }
