@@ -1,5 +1,7 @@
 from flask import Flask
-from storages.database import init_db, db
+
+from config.logging_config import setup_logging
+from storages.database import init_db
 
 
 def create_app(test_config=None):
@@ -11,15 +13,21 @@ def create_app(test_config=None):
     else:
         app.config.update(test_config)
 
+    # Setup logging
+    logger = setup_logging(app)
+
     # Initialize database
     try:
+        logger.info("Initializing database...")
         init_db(app.config.get("DATABASE"))
+        logger.info("Database initialized successfully")
     except Exception as e:
-        app.logger.error(f"Failed to initialize database: {e}")
+        logger.error(f"Failed to initialize database: {e}")
         raise
 
     @app.route("/")
     def hello_world():
+        logger.info("Hello World endpoint called")
         return "Hello, World!"
 
     return app

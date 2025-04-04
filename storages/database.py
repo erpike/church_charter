@@ -1,7 +1,10 @@
+import logging
+
 from peewee import SqliteDatabase
 from peewee_migrate import Router
 
 db = None
+logger = logging.getLogger(__name__)
 
 
 def init_db(config=None):
@@ -18,6 +21,7 @@ def init_db(config=None):
             "pragmas": {"journal_mode": "wal", "cache_size": -1024 * 64},  # 64MB
         }
 
+    logger.info(f"Connecting to database: {config['name']}")
     db = SqliteDatabase(
         config["name"],
         pragmas=config["pragmas"],
@@ -25,5 +29,7 @@ def init_db(config=None):
     )
 
     with db:
+        logger.info("Running database migrations...")
         router = Router(db, migrate_dir="storages/migrations")
         router.run()
+        logger.info("Database migrations completed successfully")
