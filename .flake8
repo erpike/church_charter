@@ -1,5 +1,5 @@
 [flake8]
-ignore = D100,D103
+ignore = D100,D101,D103
 exclude = storages/migrations/
 max-line-length = 88
 extend-ignore = E203 
