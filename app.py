@@ -2,7 +2,8 @@ from flask import Flask
 
 from config import get_config
 from config.logging_config import setup_logging
-from storages.database import init_db
+from storages.database import db, init_db
+from storages.models import Canon
 
 
 def create_app(test_config=None):
@@ -29,7 +30,9 @@ def create_app(test_config=None):
     @app.route("/")
     def hello_world():
         logger.info("Hello World endpoint called")
-        return "Hello, World!"
+        with db:
+            qty = Canon.select().count()
+        return f"Hello, World! {qty}."
 
     return app
 
