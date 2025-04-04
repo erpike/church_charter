@@ -1,15 +1,16 @@
 from flask import Flask
-from storages.database import init_db, db
+from storages.database import init_db
 
 app = Flask(__name__)
 
 # Initialize database and run migrations
 init_db()
 
+
 @app.route('/')
 def hello_world():
-    with db:
-        return 'Hello, World!'
+    return "Hello, World!"
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     app.run(debug=True)
