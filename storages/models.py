@@ -2,13 +2,9 @@ from peewee import (
     Model,
     DateTimeField,
     CharField,
-    TextField,
-    SqliteDatabase, 
 )
 from datetime import datetime, UTC
-
-
-db = SqliteDatabase("cc.sqlite3")
+from .database import db
 
 
 class BaseModel(Model):
