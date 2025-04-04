@@ -1,15 +1,14 @@
 from flask import Flask
 from storages.models import db
-from storages.migration_manager import MigrationManager
+from peewee_migrate import Router
 
 app = Flask(__name__)
 
 # Initialize database and run migrations
 db.connect()
-migration_manager = MigrationManager(db)
-migration_manager.run_migrations()
+router = Router(db, migrate_dir='storages/migrations')
+router.run()
 db.close()
-
 
 @app.route('/')
 def hello_world():
