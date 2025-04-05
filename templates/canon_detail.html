@@ -17,16 +17,23 @@
         {% if canon.chapters %}
         <div class="list-group">
             {% for chapter in canon.chapters.order_by(CanonChapter.position) %}
-            <div class="list-group-item">
-                <h5 class="mb-1">{{ chapter.title }}</h5>
-                <p class="mb-1"><small class="text-muted">Type: {{ chapter.type }}</small></p>
+            <div class="list-group-item mb-4">
+                <h5 class="mb-3">{{ chapter.title }}</h5>
                 {% if chapter.items %}
                 <div class="mt-3">
                     {% for item in chapter.items.order_by(CanonItem.position) %}
                     <div class="card mb-2">
                         <div class="card-body">
-                            <h6 class="card-subtitle mb-2 text-muted">{{ item.type }}</h6>
-                            <p class="card-text">{{ item.text }}</p>
+                            {% if item.type == 'hirmos' %}
+                                <p class="card-text"><strong>Ирмос:</strong> {{ item.text }}</p>
+                            {% elif item.type == 'refrain' %}
+                                <p class="card-text"><strong>Припев:</strong> {{ item.text }}</p>
+                            {% elif item.type == 'troparion' %}
+                                <p class="card-text">{{ item.text }}</p>
+                            {% else %}
+                                <h6 class="card-subtitle mb-2 text-muted">{{ item.type }}</h6>
+                                <p class="card-text">{{ item.text }}</p>
+                            {% endif %}
                         </div>
                     </div>
                     {% endfor %}
@@ -42,4 +49,4 @@
         {% endif %}
     </div>
 </div>
-{% endblock %} 
+{% endblock %}
