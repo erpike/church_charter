@@ -1,5 +1,7 @@
 import os
 import tempfile
+from unittest import mock
+from unittest.mock import call
 
 import pytest
 
@@ -43,11 +45,13 @@ def client(app):
     return app.test_client()
 
 
-def test_hello_world(client):
+def test_index(client):
     """Test the hello world endpoint."""
-    response = client.get("/")
-    assert response.status_code == 200
-    assert response.data == b"Hello, World! 0."
+    with mock.patch("app.render_template") as m:
+        response = client.get("/")
+        assert response.status_code == 200
+        assert m.call_count == 1
+        assert m.call_args_list[0] == call("index.html", canons=[])
 
 
 def test_app_creation(test_config):

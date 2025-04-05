@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 
 from config import get_config
 from config.logging_config import setup_logging
@@ -28,11 +28,11 @@ def create_app(test_config=None):
         raise
 
     @app.route("/")
-    def hello_world():
-        logger.info("Hello World endpoint called")
+    def index():
+        logger.info("Index endpoint called")
         with db:
-            qty = Canon.select().count()
-        return f"Hello, World! {qty}."
+            canons = list(Canon.select().order_by(Canon.created_at.desc()))
+        return render_template("index.html", canons=canons)
 
     return app
 
