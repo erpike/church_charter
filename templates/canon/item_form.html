@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}{% if item %}Редагування елементу{% else %}Створення елементу{% endif %} - {{ chapter.title }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Канони</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('canon.detail', canon_id=chapter.canon.id) }}">{{ chapter.canon.name }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{% if item %}Редагування елементу{% else %}Створення елементу{% endif %}</li>
+            </ol>
+        </nav>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">{% if item %}Редагування елементу{% else %}Створення елементу{% endif %}</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="type" class="form-label">Тип елементу</label>
+                        <select class="form-select" id="type" name="type" required>
+                            <option value="">Виберіть тип</option>
+                            {% for type in item_types %}
+                            <option value="{{ type.value }}" {% if item and item.type == type.value %}selected{% endif %}>
+                                {{ type.value }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="text" class="form-label">Текст</label>
+                        <textarea class="form-control" id="text" name="text" rows="5" required>{{ item.text if item else '' }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="position" class="form-label">Позиція</label>
+                        <input type="number" class="form-control" id="position" name="position" value="{{ item.position if item else 0 }}" min="0">
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('canon.detail', canon_id=chapter.canon.id) }}" class="btn btn-secondary">Назад</a>
+                        <button type="submit" class="btn btn-primary">{% if item %}Зберегти зміни{% else %}Створити елемент{% endif %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

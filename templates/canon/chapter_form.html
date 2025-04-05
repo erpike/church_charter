@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}{% if chapter %}Редагування глави{% else %}Створення глави{% endif %} - {{ canon.name }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Канони</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('canon.detail', canon_id=canon.id) }}">{{ canon.name }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{% if chapter %}Редагування глави{% else %}Створення глави{% endif %}</li>
+            </ol>
+        </nav>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">{% if chapter %}Редагування глави{% else %}Створення глави{% endif %}</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Назва глави</label>
+                        <input type="text" class="form-control" id="title" name="title" value="{{ chapter.title if chapter else '' }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="type" class="form-label">Тип глави</label>
+                        <select class="form-select" id="type" name="type" required>
+                            <option value="">Виберіть тип</option>
+                            {% for type in chapter_types %}
+                            <option value="{{ type.value }}" {% if chapter and chapter.type == type.value %}selected{% endif %}>
+                                {{ type.value }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="position" class="form-label">Позиція</label>
+                        <input type="number" class="form-control" id="position" name="position" value="{{ chapter.position if chapter else 0 }}" min="0">
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('canon.detail', canon_id=canon.id) }}" class="btn btn-secondary">Назад</a>
+                        <button type="submit" class="btn btn-primary">{% if chapter %}Зберегти зміни{% else %}Створити главу{% endif %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
