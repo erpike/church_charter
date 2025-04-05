@@ -13,29 +13,30 @@ from storages.models import User
 # create Blueprint
 auth_bp = Blueprint("auth", __name__)
 
+login_manager = LoginManager()
 
+
+@login_manager.user_loader
 def load_user(user_id):
     with db:
-        return User.get_or_none(User.id == user_id)
+        return User.get_or_none(User.id == int(user_id))
 
 
 def init_auth(app):
     """Initialize authentication for the application."""
     # set up Flask-Login
-    login_manager = LoginManager()
     login_manager.init_app(app)
     login_manager.login_view = "auth.login"
     login_manager.login_message = "Будь ласка, увійдіть для доступу до цієї сторінки."
-    login_manager.user_loader(load_user)
 
     # Blueprint register
     app.register_blueprint(auth_bp)
 
-    # create admin if he does not exist
+    # Create admin user if not exists
     with db:
-        if not User.select().where(User.username == "admin").exists():
-            admin = User(username="admin")
-            admin.set_password("admin_password")
+        if not User.get_or_none(User.username == app.config["ADMIN_USERNAME"]):
+            admin = User(username=app.config["ADMIN_USERNAME"])
+            admin.set_password(app.config["ADMIN_PASSWORD"])
             admin.save()
             app.logger.info("Admin user created")
 

@@ -1,5 +1,7 @@
 """Base configuration for the application."""
 
+import os
+
 
 class BaseConfig:
     # Database configuration
@@ -16,3 +18,7 @@ class BaseConfig:
     LOG_LEVEL = "INFO"
     LOG_FILE_LEVEL = "INFO"
     LOG_CONSOLE_LEVEL = "INFO"
+
+    # Admin credentials
+    ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME", "admin")
+    ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "password")

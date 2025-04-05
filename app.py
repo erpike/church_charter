@@ -22,7 +22,6 @@ def create_app(test_config=None):
     # Setup logging
     logger = setup_logging(app)
 
-    # Initialize database
     try:
         logger.info("Initializing database...")
         init_db(app.config.get("DATABASE"))
@@ -31,10 +30,9 @@ def create_app(test_config=None):
         logger.error(f"Failed to initialize database: {e}")
         raise
 
-    # Initialize authentication
+    logger.info("Initializing auth...")
     init_auth(app)
-
-    # Initialize routes
+    logger.info("Initializing routes...")
     init_routes(app)
 
     return app
