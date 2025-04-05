@@ -6,10 +6,44 @@
 <div class="row">
     <div class="col-12">
         <h1 class="mb-4">Адмін-панель</h1>
-        <div class="alert alert-success">
-            Ви успішно увійшли в систему як адміністратор.
+        
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Управління канонами</h5>
+                <a href="{{ url_for('admin.create_canon') }}" class="btn btn-primary">Створити новий канон</a>
+            </div>
+            <div class="card-body">
+                {% if canons %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Назва</th>
+                                <th>Дії</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for canon in canons %}
+                            <tr>
+                                <td>{{ canon.name }}</td>
+                                <td>
+                                    <a href="{{ url_for('admin.edit_canon', canon_id=canon.id) }}" class="btn btn-sm btn-warning">Редагувати</a>
+                                    <form action="{{ url_for('admin.delete_canon', canon_id=canon.id) }}" method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Ви впевнені, що хочете видалити цей канон?')">Видалити</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    Немає доступних канонів.
+                </div>
+                {% endif %}
+            </div>
         </div>
-        <p>Тут буде функціонал для управління канонами.</p>
     </div>
 </div>
 {% endblock %} 

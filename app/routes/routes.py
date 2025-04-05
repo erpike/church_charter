@@ -1,12 +1,15 @@
 from flask import abort, render_template
 from flask_login import login_required
 
+from app.routes.admin import admin_bp
 from storages.database import db
 from storages.models import Canon, CanonChapter, CanonItem
 
 
 def init_routes(app):
     """Initialize routes for the application."""
+    # Register blueprints
+    app.register_blueprint(admin_bp)
 
     @app.route("/")
     def index():
