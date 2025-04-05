@@ -25,7 +25,7 @@
                         <tbody>
                             {% for canon in canons %}
                             <tr>
-                                <td>{{ canon.name }}</td>
+                                <td><a href="{{ url_for('canon.detail', canon_id=canon.id) }}">{{ canon.name }}</a></td>
                                 <td>
                                     <a href="{{ url_for('admin.edit_canon', canon_id=canon.id) }}" class="btn btn-sm btn-warning">Редагувати</a>
                                     <form action="{{ url_for('admin.delete_canon', canon_id=canon.id) }}" method="POST" class="d-inline">
