@@ -1,3 +1,6 @@
+from io import BytesIO
+
+from docx import Document
 from flask import (
     Blueprint,
     abort,
@@ -6,6 +9,7 @@ from flask import (
     redirect,
     render_template,
     request,
+    send_file,
     url_for,
 )
 from flask_login import login_required
@@ -284,3 +288,51 @@ def update_items_order(chapter_id):
             return jsonify({"success": True})
         except Exception as e:
             return jsonify({"success": False, "message": str(e)}), 500
+
+
+@canon_bp.route("/<int:canon_id>/download-docx")
+def download_docx(canon_id):
+    """Download canon as a .docx file."""
+    with db:
+        canon = Canon.get_or_none(Canon.id == canon_id)
+        if canon is None:
+            abort(404)
+
+        # Create a new Document
+        doc = Document()
+
+        # Add title
+        doc.add_heading(canon.name, 0)
+
+        # Add chapters and their items
+        for chapter in canon.chapters.order_by(CanonChapter.position):
+            # Add chapter title
+            doc.add_heading(chapter.title, level=1)
+
+            # Add items
+            for item in chapter.items.order_by(CanonItem.position):
+                if item.type == "hirmos":
+                    doc.add_paragraph(f"Ирмос: {item.text}")
+                elif item.type == "refrain":
+                    doc.add_paragraph(f"Припев: {item.text}")
+                else:
+                    doc.add_paragraph(item.text)
+
+            # Add a separator between chapters
+            doc.add_paragraph()
+
+        # Save the document to a BytesIO object
+        doc_io = BytesIO()
+        doc.save(doc_io)
+        doc_io.seek(0)
+
+        # Return the document as a downloadable file
+        return send_file(
+            doc_io,
+            mimetype=(
+                "application/vnd.openxmlformats-officedocument"
+                ".wordprocessingml.document"
+            ),
+            as_attachment=True,
+            download_name=f"{canon.name}.docx",
+        )

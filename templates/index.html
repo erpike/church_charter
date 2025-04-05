@@ -12,16 +12,18 @@
                 <thead>
                     <tr>
                         <th>Назва</th>
-<!--                        <th>Created At</th>-->
-<!--                        <th>Updated At</th>-->
+                        <th>Дії</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for canon in canons %}
                     <tr>
                         <td><a href="{{ url_for('canon.detail', canon_id=canon.id) }}">{{ canon.name }}</a></td>
-<!--                        <td>{{ canon.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>-->
-<!--                        <td>{{ canon.updated_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>-->
+                        <td>
+                            <a href="{{ url_for('canon.download_docx', canon_id=canon.id) }}" class="btn btn-sm btn-success">
+                                Завантажити DOCX
+                            </a>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
