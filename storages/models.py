@@ -1,6 +1,7 @@
 from datetime import UTC, datetime
 from enum import Enum
 
+from flask_login import UserMixin
 from peewee import (
     CharField,
     Check,
@@ -10,6 +11,7 @@ from peewee import (
     Model,
     TextField,
 )
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from .database import db
 
@@ -40,6 +42,22 @@ class BaseModel(Model):
 
     class Meta:
         database = db
+
+
+class User(BaseModel, UserMixin):
+    """Model representing an admin user."""
+
+    username = CharField(max_length=80, unique=True)
+    password_hash = CharField(max_length=128)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    class Meta:
+        table_name = "user"
 
 
 class Canon(BaseModel):

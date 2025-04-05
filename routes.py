@@ -1,4 +1,5 @@
 from flask import abort, render_template
+from flask_login import login_required
 
 from storages.database import db
 from storages.models import Canon, CanonChapter, CanonItem
@@ -27,3 +28,9 @@ def init_routes(app):
                 CanonChapter=CanonChapter,
                 CanonItem=CanonItem,
             )
+
+    @app.route("/admin")
+    @login_required
+    def admin_dashboard():
+        app.logger.info("Admin dashboard accessed")
+        return render_template("admin/dashboard.html")

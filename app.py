@@ -1,5 +1,6 @@
 from flask import Flask
 
+from auth import init_auth
 from config import get_config
 from config.logging_config import setup_logging
 from routes import init_routes
@@ -15,6 +16,9 @@ def create_app(test_config=None):
     else:
         app.config.update(test_config)
 
+    # add session secret key
+    app.config["SECRET_KEY"] = "your-secret-key-here"
+
     # Setup logging
     logger = setup_logging(app)
 
@@ -26,6 +30,9 @@ def create_app(test_config=None):
     except Exception as e:
         logger.error(f"Failed to initialize database: {e}")
         raise
+
+    # Initialize authentication
+    init_auth(app)
 
     # Initialize routes
     init_routes(app)
