@@ -12,16 +12,16 @@
             </ol>
         </nav>
 
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
             <h1>{{ canon.name }}</h1>
             <div class="btn-group">
                 <a href="{{ url_for('canon.download_docx', canon_id=canon.id) }}" class="btn btn-success">
                     Завантажити як DOCX
                 </a>
                 {% if current_user.is_authenticated %}
-                <a href="{{ url_for('canon.create_chapter', canon_id=canon.id) }}" class="btn btn-primary">
-                    Додати главу
-                </a>
+                <button id="toggleEditMode" class="btn btn-primary">
+                    Редагувати
+                </button>
                 {% endif %}
             </div>
         </div>
@@ -29,17 +29,16 @@
         {% if canon.chapters %}
             <div class="list-group" id="chapters-container">
                 {% for chapter in canon.chapters.order_by(CanonChapter.position) %}
-                <div class="list-group-item mb-4" data-id="{{ chapter.id }}">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="list-group-item mb-3" data-id="{{ chapter.id }}">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
                         <h5 class="mb-0">
                             {% if current_user.is_authenticated %}
-                            <span class="drag-handle" style="cursor: move; margin-right: 10px;">☰</span>
+                            <span class="drag-handle edit-mode-only" style="cursor: move; margin-right: 10px; display: none;">☰</span>
                             {% endif %}
                             {{ chapter.title }}
-<!--                            <small class="text-muted">({{ chapter.type.display_name }})</small>-->
                         </h5>
                         {% if current_user.is_authenticated %}
-                        <div class="btn-group">
+                        <div class="btn-group edit-mode-only" style="display: none;">
                             <a href="{{ url_for('canon.create_item', chapter_id=chapter.id) }}" class="btn btn-sm btn-success">
                                 Додати елемент
                             </a>
@@ -55,15 +54,15 @@
                         {% endif %}
                     </div>
                     {% if chapter.items %}
-                        <div class="mt-3 items-container" data-chapter-id="{{ chapter.id }}">
+                        <div class="mt-2 items-container" data-chapter-id="{{ chapter.id }}">
                             {% for item in chapter.items.order_by(CanonItem.position) %}
                             <div class="card mb-2" data-id="{{ item.id }}">
-                                <div class="card-body">
+                                <div class="card-body py-2">
                                     <div class="d-flex justify-content-between align-items-start">
                                         <div>
-                                            <p class="card-text">
+                                            <p class="card-text mb-0">
                                                 {% if current_user.is_authenticated %}
-                                                    <span class="drag-handle" style="cursor: move; margin-right: 10px;">☰</span>
+                                                <span class="drag-handle edit-mode-only" style="cursor: move; margin-right: 10px; display: none;">☰</span>
                                                 {% endif %}
                                                 {% if item.type == 'hirmos' %}
                                                     <strong>Ирмос:</strong>
@@ -74,7 +73,7 @@
                                             </p>
                                         </div>
                                         {% if current_user.is_authenticated %}
-                                        <div class="btn-group">
+                                        <div class="btn-group edit-mode-only" style="display: none;">
                                             <a href="{{ url_for('canon.edit_item', item_id=item.id) }}" class="btn btn-sm btn-warning">
                                                 Редагувати
                                             </a>
@@ -91,7 +90,7 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                        <div class="alert alert-info">
+                        <div class="alert alert-info py-2">
                             Немає елементів у цій главі.
                         </div>
                     {% endif %}
@@ -107,76 +106,119 @@
 </div>
 
 {% if current_user.is_authenticated %}
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // init Sortable for chapters
-        const chaptersContainer = document.getElementById('chapters-container');
-        if (chaptersContainer) {
-            new Sortable(chaptersContainer, {
-                handle: '.drag-handle',
-                animation: 150,
-                onEnd: function(evt) {
-                    const chapters = Array.from(chaptersContainer.children).map((el, index) => {
-                        return {
-                            id: el.dataset.id,
-                            position: index
-                        };
-                    });
-                    
-                    // send updated positions to server
-                    fetch('{{ url_for("canon.update_chapters_order", canon_id=canon.id) }}', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ chapters: chapters }),
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            console.log('Позиції глав оновлено');
-                        } else {
-                            console.error('Помилка оновлення позицій глав');
-                        }
-                    });
-                }
+        // Edit mode toggle
+        const toggleEditModeBtn = document.getElementById('toggleEditMode');
+        let isEditMode = false;
+        
+        toggleEditModeBtn.addEventListener('click', function() {
+            isEditMode = !isEditMode;
+            toggleEditModeBtn.textContent = isEditMode ? 'Завершити редагування' : 'Редагувати';
+            toggleEditModeBtn.classList.toggle('btn-primary');
+            toggleEditModeBtn.classList.toggle('btn-danger');
+            
+            // Toggle visibility of edit controls
+            document.querySelectorAll('.edit-mode-only').forEach(el => {
+                el.style.display = isEditMode ? '' : 'none';
+            });
+            
+            // Toggle Sortable functionality
+            if (isEditMode) {
+                initSortable();
+            } else {
+                destroySortable();
+            }
+        });
+        
+        // Sortable instances
+        let chaptersSortable = null;
+        let itemsSortables = [];
+        
+        function initSortable() {
+            // init Sortable for chapters
+            const chaptersContainer = document.getElementById('chapters-container');
+            if (chaptersContainer) {
+                chaptersSortable = new Sortable(chaptersContainer, {
+                    handle: '.drag-handle',
+                    animation: 150,
+                    onEnd: function(evt) {
+                        const chapters = Array.from(chaptersContainer.children).map((el, index) => {
+                            return {
+                                id: el.dataset.id,
+                                position: index
+                            };
+                        });
+                        
+                        // send updated positions to server
+                        fetch('{{ url_for("canon.update_chapters_order", canon_id=canon.id) }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ chapters: chapters }),
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                console.log('Позиції глав оновлено');
+                            } else {
+                                console.error('Помилка оновлення позицій глав');
+                            }
+                        });
+                    }
+                });
+            }
+            
+            // init Sortable for items in each chapter
+            const itemsContainers = document.querySelectorAll('.items-container');
+            itemsContainers.forEach(container => {
+                const sortable = new Sortable(container, {
+                    handle: '.drag-handle',
+                    animation: 150,
+                    onEnd: function(evt) {
+                        const chapterId = container.dataset.chapterId;
+                        const items = Array.from(container.children).map((el, index) => {
+                            return {
+                                id: el.dataset.id,
+                                position: index
+                            };
+                        });
+                        
+                        // send updated positions to server
+                        fetch(`{{ url_for("canon.update_items_order", chapter_id=0) }}`.replace('0', chapterId), {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ items: items }),
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                console.log('Позиції елементів оновлено');
+                            } else {
+                                console.error('Помилка оновлення позицій елементів');
+                            }
+                        });
+                    }
+                });
+                itemsSortables.push(sortable);
             });
         }
         
-        // init Sortable for items in each chapter
-        const itemsContainers = document.querySelectorAll('.items-container');
-        itemsContainers.forEach(container => {
-            new Sortable(container, {
-                handle: '.drag-handle',
-                animation: 150,
-                onEnd: function(evt) {
-                    const chapterId = container.dataset.chapterId;
-                    const items = Array.from(container.children).map((el, index) => {
-                        return {
-                            id: el.dataset.id,
-                            position: index
-                        };
-                    });
-                    
-                    // send updated positions to server
-                    fetch(`{{ url_for("canon.update_items_order", chapter_id=0) }}`.replace('0', chapterId), {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ items: items }),
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            console.log('Позиції елементів оновлено');
-                        } else {
-                            console.error('Помилка оновлення позицій елементів');
-                        }
-                    });
-                }
+        function destroySortable() {
+            if (chaptersSortable) {
+                chaptersSortable.destroy();
+                chaptersSortable = null;
+            }
+            
+            itemsSortables.forEach(sortable => {
+                sortable.destroy();
             });
-        });
+            itemsSortables = [];
+        }
     });
 </script>
 {% endif %}

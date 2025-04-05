@@ -34,11 +34,6 @@ def detail(canon_id):
         canon = Canon.get_or_none(Canon.id == canon_id)
         if canon is None:
             abort(404)
-        print("--")
-        print(canon)
-        for i in canon.chapters:
-            print(f"> {i} || {i.type} || {CanonChapterType[i.type].display_name}")
-        print("--")
         return render_template(
             "canon_detail.html",
             canon=canon,
