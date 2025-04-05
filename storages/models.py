@@ -1,9 +1,15 @@
+from datetime import UTC, datetime
+
 from peewee import (
-    Model,
-    DateTimeField,
     CharField,
+    Check,
+    DateTimeField,
+    ForeignKeyField,
+    IntegerField,
+    Model,
+    TextField,
 )
-from datetime import datetime, UTC
+
 from .database import db
 
 
@@ -20,3 +26,22 @@ class Canon(BaseModel):
 
     class Meta:
         table_name = "canon"
+
+
+class CanonItem(BaseModel):
+    canon = ForeignKeyField(Canon, backref="items", on_delete="CASCADE")
+    type = CharField(
+        max_length=255,
+        constraints=[
+            Check(
+                """type IN (
+                'hirmos', 'ikos', 'song', 'troparion', 'kontakion', 'stichos'
+            )"""
+            )
+        ],
+    )
+    text = TextField()
+    position = IntegerField(default=0)
+
+    class Meta:
+        table_name = "canonitem"

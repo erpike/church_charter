@@ -2,3 +2,4 @@
 ignore = D100,D101,D103,D106
 exclude = storages/migrations/
 extend-ignore = E203
+max-line-length = 88
