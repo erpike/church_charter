@@ -7,7 +7,12 @@ def migrate(migrator, database, **kwargs):
             canon_id INTEGER NOT NULL, 
             title VARCHAR(255) NOT NULL,
             position INTEGER NOT NULL DEFAULT 0,
-            type VARCHAR(32) NOT NULL CHECK (type IN ('song', 'troparion', 'kontakion', 'stichos')),
+            type VARCHAR(32) NOT NULL CHECK (
+                type IN (
+                    'song', 'troparion', 'kontakion', 'stichos', 'sessional_hymn', 
+                    'theotokion', 'trinitarian', 'ikos'
+                )
+            ),
             created_at TIMESTAMP DEFAULT (datetime('now', 'utc')),
             updated_at TIMESTAMP DEFAULT (datetime('now', 'utc')),
             FOREIGN KEY (canon_id) REFERENCES canon(id) ON DELETE CASCADE
@@ -18,7 +23,10 @@ def migrate(migrator, database, **kwargs):
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             chapter_id INTEGER NOT NULL, 
             type VARCHAR(32) NOT NULL CHECK (
-                type IN ('refrain', 'hirmos', 'ikos', 'song', 'troparion', 'kontakion', 'stichos')
+                type IN (
+                    'refrain', 'hirmos', 'ikos', 'song', 'troparion', 'kontakion',
+                    'stichos', 'sessional_hymn', 'theotokion', 'trinitarian'
+                )
             ),
             text TEXT NOT NULL,
             position INTEGER NOT NULL DEFAULT 0,

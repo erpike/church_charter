@@ -79,6 +79,10 @@ class CanonChapterType(str, Enum):
     troparion = "troparion"
     kontakion = "kontakion"
     stichos = "stichos"
+    sessional_hymn = "sessional hymn"
+    theotokion = "theotokion"
+    trinitarian = "trinitarian"
+    ikos = "ikos"
 
     @classmethod
     def values(cls):
@@ -93,6 +97,10 @@ class CanonChapterType(str, Enum):
             CanonChapterType.troparion: "тропар",
             CanonChapterType.kontakion: "кондак",
             CanonChapterType.stichos: "стихіра",
+            CanonChapterType.sessional_hymn: "сидален",
+            CanonChapterType.theotokion: "Богородичен",
+            CanonChapterType.trinitarian: "Троїчен",
+            CanonChapterType.ikos: "ікос",
         }[self]
 
 
@@ -125,6 +133,9 @@ class CanonItemType(str, Enum):
     troparion = "troparion"
     kontakion = "kontakion"
     stichos = "stichos"
+    sessional_hymn = "sessional_hymn"
+    theotokion = "theotokion"
+    trinitarian = "trinitarian"
 
     @classmethod
     def values(cls):
@@ -142,6 +153,9 @@ class CanonItemType(str, Enum):
             CanonItemType.troparion: "тропар",
             CanonItemType.kontakion: "кондак",
             CanonItemType.stichos: "стихіра",
+            CanonItemType.sessional_hymn: "сидален",
+            CanonItemType.theotokion: "Богородичен",
+            CanonItemType.trinitarian: "Троїчен",
         }[self]
 
 
