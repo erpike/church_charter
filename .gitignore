@@ -2,3 +2,4 @@
 Pipfile*
 *.sqlite3
 *.log
+/utils/populate_db.py
