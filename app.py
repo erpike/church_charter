@@ -1,9 +1,9 @@
-from flask import Flask, render_template
+from flask import Flask, abort, render_template
 
 from config import get_config
 from config.logging_config import setup_logging
 from storages.database import db, init_db
-from storages.models import Canon
+from storages.models import Canon, CanonChapter, CanonItem
 
 
 def create_app(test_config=None):
@@ -33,6 +33,20 @@ def create_app(test_config=None):
         with db:
             canons = list(Canon.select().order_by(Canon.created_at.desc()))
         return render_template("index.html", canons=canons)
+
+    @app.route("/canon/<int:canon_id>")
+    def canon_detail(canon_id):
+        logger.info(f"Canon detail endpoint called for canon_id: {canon_id}")
+        with db:
+            canon = Canon.get_or_none(Canon.id == canon_id)
+            if canon is None:
+                abort(404)
+            return render_template(
+                "canon_detail.html",
+                canon=canon,
+                CanonChapter=CanonChapter,
+                CanonItem=CanonItem,
+            )
 
     return app
 
