@@ -1,0 +1,72 @@
+/* Custom styles for the canon detail page */
+
+/* Remove borders from list-group-items */
+.list-group-item {
+    border: none !important;
+    border-radius: 0 !important;
+    margin-bottom: 1rem !important;
+    padding: 1rem !important;
+    background-color: transparent !important;
+}
+
+/* Remove borders from cards */
+.card {
+    border: none !important;
+    border-radius: 0 !important;
+    margin-bottom: 0.5rem !important;
+    background-color: transparent !important;
+}
+
+.card-body {
+    padding: 0.5rem 0 !important;
+}
+
+/* Add subtle separation between chapters */
+.list-group-item:not(:last-child) {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Add subtle separation between items */
+.card:not(:last-child) {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Add spacing between buttons */
+.btn-group .btn {
+    margin-right: 5px !important;
+}
+
+.btn-group .btn:last-child {
+    margin-right: 0 !important;
+}
+
+/* Add spacing between button groups */
+.btn-group {
+    margin-right: 10px !important;
+}
+
+.btn-group:last-child {
+    margin-right: 0 !important;
+}
+
+/* Add spacing between buttons in card actions */
+.card .btn-group .btn {
+    margin-right: 5px !important;
+}
+
+.card .btn-group .btn:last-child {
+    margin-right: 0 !important;
+}
+
+/* Edit mode styles */
+.edit-mode .list-group-item {
+    border: 1px solid rgba(0, 0, 0, 0.125) !important;
+    border-radius: 0.25rem !important;
+    background-color: #f8f9fa !important;
+}
+
+.edit-mode .card {
+    border: 1px solid rgba(0, 0, 0, 0.125) !important;
+    border-radius: 0.25rem !important;
+    background-color: #f8f9fa !important;
+} 

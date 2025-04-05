@@ -117,12 +117,15 @@
             isEditMode = !isEditMode;
             toggleEditModeBtn.textContent = isEditMode ? 'Завершити редагування' : 'Редагувати';
             toggleEditModeBtn.classList.toggle('btn-primary');
-            toggleEditModeBtn.classList.toggle('btn-danger');
+            toggleEditModeBtn.classList.toggle('btn-info');
             
             // Toggle visibility of edit controls
             document.querySelectorAll('.edit-mode-only').forEach(el => {
                 el.style.display = isEditMode ? '' : 'none';
             });
+            
+            // Toggle edit-mode class on the container
+            document.getElementById('chapters-container').classList.toggle('edit-mode');
             
             // Toggle Sortable functionality
             if (isEditMode) {
