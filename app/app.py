@@ -1,14 +1,21 @@
+import os
+
 from flask import Flask
 
-from auth import init_auth
+from app.auth.auth import init_auth
+from app.routes.routes import init_routes
 from config import get_config
 from config.logging_config import setup_logging
-from routes import init_routes
 from storages.database import init_db
 
 
 def create_app(test_config=None):
-    app = Flask(__name__)
+    app = Flask(
+        __name__,
+        template_folder=os.path.join(
+            os.path.dirname(os.path.dirname(__file__)), "templates"
+        ),
+    )
 
     # Load configuration
     if test_config is None:
@@ -36,8 +43,3 @@ def create_app(test_config=None):
     init_routes(app)
 
     return app
-
-
-if __name__ == "__main__":
-    app = create_app()
-    app.run(debug=app.config["DEBUG"])
