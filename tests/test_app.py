@@ -12,9 +12,12 @@ def temp_db_file():
     """Create a temporary database file for testing."""
     fd, path = tempfile.mkstemp(suffix=".sqlite")
     os.close(fd)
-    yield path
-    # Clean up the temporary file after the test
-    os.unlink(path)
+    try:
+        yield path
+    finally:
+        # Clean up the temporary file after the test, even if the test fails
+        if os.path.exists(path):
+            os.unlink(path)
 
 
 @pytest.fixture
