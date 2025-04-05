@@ -29,6 +29,8 @@ def test_config(temp_db_file):
         "TESTING": True,
         "DATABASE": {"name": temp_db_file, "pragmas": {}},
         "DEBUG": False,
+        "ADMIN_USERNAME": "admin",
+        "ADMIN_PASSWORD": "pass",
         # Add any other test-specific configuration here
     }
 
@@ -47,7 +49,7 @@ def client(app):
 
 def test_index(client):
     """Test the hello world endpoint."""
-    with mock.patch("app.render_template") as m:
+    with mock.patch("routes.render_template") as m:
         response = client.get("/")
         assert response.status_code == 200
         assert m.call_count == 1
