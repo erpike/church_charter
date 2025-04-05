@@ -1,23 +1,25 @@
 """Production configuration."""
 
-import os
-
 from config.base import BaseConfig
 
 
 class ProductionConfig(BaseConfig):
     DEBUG = False
 
-    # Production-specific database settings
+    # Production-specific settings
+    SECRET_KEY = "your-secure-production-secret-key"  # Change this!
+
+    # Admin credentials - should be overridden by environment variables
+    ADMIN_USERNAME = "admin"  # Default, should be overridden
+    ADMIN_PASSWORD = "change_this_password"  # Default, should be overridden
+
+    # Production database settings
     DATABASE = {
         **BaseConfig.DATABASE,
-        "name": os.environ.get("DB_NAME", "cc.sqlite3"),
+        "name": "cc.sqlite3",
     }
 
-    # Production logging - less verbose, more focused on errors
-    LOG_LEVEL = "INFO"
+    # Production logging
+    LOG_LEVEL = "WARNING"
     LOG_FILE_LEVEL = "WARNING"
     LOG_CONSOLE_LEVEL = "ERROR"
-
-    # Use environment variable for secret key in production
-    SECRET_KEY = os.environ.get("SECRET_KEY", BaseConfig.SECRET_KEY)
