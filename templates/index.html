@@ -19,7 +19,7 @@
                 <tbody>
                     {% for canon in canons %}
                     <tr>
-                        <td><a href="{{ url_for('canon_detail', canon_id=canon.id) }}">{{ canon.name }}</a></td>
+                        <td><a href="{{ url_for('canon.detail', canon_id=canon.id) }}">{{ canon.name }}</a></td>
 <!--                        <td>{{ canon.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>-->
 <!--                        <td>{{ canon.updated_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>-->
                     </tr>
@@ -29,7 +29,7 @@
         </div>
         {% else %}
         <div class="alert alert-info">
-            No canons found in the database.
+            Немає даних.
         </div>
         {% endif %}
     </div>
