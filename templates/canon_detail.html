@@ -36,6 +36,7 @@
                             <span class="drag-handle" style="cursor: move; margin-right: 10px;">☰</span>
                             {% endif %}
                             {{ chapter.title }}
+<!--                            <small class="text-muted">({{ chapter.type.display_name }})</small>-->
                         </h5>
                         {% if current_user.is_authenticated %}
                         <div class="btn-group">
@@ -60,18 +61,27 @@
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between align-items-start">
                                         <div>
-                                            {% if current_user.is_authenticated %}
-                                            <span class="drag-handle" style="cursor: move; margin-right: 10px;">☰</span>
-                                            {% endif %}
-                                            {% if item.type == 'hirmos' %}
-                                            <p class="card-text"><strong>Ирмос:</strong> {{ item.text }}</p>
-                                            {% elif item.type == 'refrain' %}
-                                            <p class="card-text"><strong>Припев:</strong> {{ item.text }}</p>
-                                            {% elif item.type == 'troparion' %}
-                                            <p class="card-text">{{ item.text }}</p>
-                                            {% else %}
-                                            <p class="card-text">{{ item.text }}</p>
-                                            {% endif %}
+                                            <p class="card-text">
+                                                {% if current_user.is_authenticated %}
+                                                    <span class="drag-handle" style="cursor: move; margin-right: 10px;">☰</span>
+                                                {% endif %}
+                                                {% if item.type == 'hirmos' %}
+                                                    <strong>Ирмос:</strong>
+                                                {% elif item.type == 'refrain' %}
+                                                    <strong>Припев:</strong>
+                                                {% elif item.type == 'troparion' %}
+                                                    <strong>Тропарь:</strong>
+                                                {% elif item.type == 'kontakion' %}
+                                                    <strong>Кондак:</strong>
+                                                {% elif item.type == 'ikos' %}
+                                                    <strong>Икос:</strong>
+                                                {% elif item.type == 'song' %}
+                                                    <strong>Песня:</strong>
+                                                {% elif item.type == 'stichos' %}
+                                                    <strong>Стихіра:</strong>
+                                                {% endif %}
+                                                <span>{{ item.text }}</span>
+                                            </p>
                                         </div>
                                         {% if current_user.is_authenticated %}
                                         <div class="btn-group">
@@ -145,13 +155,12 @@
         
         // init Sortable for items in each chapter
         const itemsContainers = document.querySelectorAll('.items-container');
-        itemsContainers.forEach(function(container) {
-            const chapterId = container.dataset.chapterId;
-            
+        itemsContainers.forEach(container => {
             new Sortable(container, {
                 handle: '.drag-handle',
                 animation: 150,
                 onEnd: function(evt) {
+                    const chapterId = container.dataset.chapterId;
                     const items = Array.from(container.children).map((el, index) => {
                         return {
                             id: el.dataset.id,
@@ -160,7 +169,7 @@
                     });
                     
                     // send updated positions to server
-                    fetch('{{ url_for("canon.update_items_order", chapter_id=0) }}'.replace('0', chapterId), {
+                    fetch(`{{ url_for("canon.update_items_order", chapter_id=0) }}`.replace('0', chapterId), {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

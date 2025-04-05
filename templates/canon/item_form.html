@@ -25,7 +25,7 @@
                             <option value="">Виберіть тип</option>
                             {% for type in item_types %}
                             <option value="{{ type.value }}" {% if item and item.type == type.value %}selected{% endif %}>
-                                {{ type.value }}
+                                {{ type.display_name }}
                             </option>
                             {% endfor %}
                         </select>

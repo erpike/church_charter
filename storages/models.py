@@ -72,18 +72,28 @@ class Canon(BaseModel):
         return self.name
 
 
-class CanonChapterType(Enum):
-    """Enum for the types of chapters in a canon."""
+class CanonChapterType(str, Enum):
+    """Types of chapters in a canon."""
 
-    SONG = "song"
-    TROPARION = "troparion"
-    KONTAKION = "kontakion"
-    STICHOS = "stichos"
+    song = "song"
+    troparion = "troparion"
+    kontakion = "kontakion"
+    stichos = "stichos"
 
     @classmethod
     def values(cls):
         """Return all values as a comma-separated string for SQL."""
         return ", ".join(f"'{item.value}'" for item in cls)
+
+    @property
+    def display_name(self) -> str:
+        """Get display name in Ukrainian."""
+        return {
+            CanonChapterType.song: "пісня",
+            CanonChapterType.troparion: "тропар",
+            CanonChapterType.kontakion: "кондак",
+            CanonChapterType.stichos: "стихіра",
+        }[self]
 
 
 class CanonChapter(BaseModel):
@@ -105,21 +115,34 @@ class CanonChapter(BaseModel):
         return f"{self.canon.name} - {self.title}"
 
 
-class CanonItemType(Enum):
-    """Enum for the types of items in a canon."""
+class CanonItemType(str, Enum):
+    """Types of items in a canon chapter."""
 
-    REFRAIN = "refrain"
-    HIRMOS = "hirmos"
-    IKOS = "ikos"
-    SONG = "song"
-    TROPARION = "troparion"
-    KONTAKION = "kontakion"
-    STICHOS = "stichos"
+    refrain = "refrain"
+    hirmos = "hirmos"
+    ikos = "ikos"
+    song = "song"
+    troparion = "troparion"
+    kontakion = "kontakion"
+    stichos = "stichos"
 
     @classmethod
     def values(cls):
         """Return all values as a comma-separated string for SQL."""
         return ", ".join(f"'{item.value}'" for item in cls)
+
+    @property
+    def display_name(self) -> str:
+        """Get display name in Ukrainian."""
+        return {
+            CanonItemType.refrain: "приспів",
+            CanonItemType.hirmos: "ірмос",
+            CanonItemType.ikos: "ікос",
+            CanonItemType.song: "пісня",
+            CanonItemType.troparion: "тропар",
+            CanonItemType.kontakion: "кондак",
+            CanonItemType.stichos: "стихіра",
+        }[self]
 
 
 class CanonItem(BaseModel):
