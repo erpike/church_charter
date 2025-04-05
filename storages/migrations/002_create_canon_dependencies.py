@@ -7,7 +7,7 @@ def migrate(migrator, database, **kwargs):
             canon_id INTEGER NOT NULL, 
             title VARCHAR(255) NOT NULL,
             position INTEGER NOT NULL DEFAULT 0,
-            type VARCHAR(32) NOT NULL CHECK (type IN ('song', 'troparion', 'kontakion')),
+            type VARCHAR(32) NOT NULL CHECK (type IN ('song', 'troparion', 'kontakion', 'stichos')),
             created_at TIMESTAMP DEFAULT (datetime('now', 'utc')),
             updated_at TIMESTAMP DEFAULT (datetime('now', 'utc')),
             FOREIGN KEY (canon_id) REFERENCES canon(id) ON DELETE CASCADE

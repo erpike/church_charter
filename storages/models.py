@@ -20,6 +20,24 @@ class BaseModel(Model):
     created_at = DateTimeField(default=lambda: datetime.now(UTC))
     updated_at = DateTimeField(default=lambda: datetime.now(UTC))
 
+    def save(self, *args, **kwargs):
+        if not self.get_id():
+            self.created_at = datetime.now(UTC)
+        self.updated_at = datetime.now(UTC)
+        return super().save(*args, **kwargs)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Convert string timestamps to datetime objects if needed
+        if isinstance(self.created_at, str):
+            self.created_at = datetime.fromisoformat(
+                self.created_at.replace("Z", "+00:00")
+            )
+        if isinstance(self.updated_at, str):
+            self.updated_at = datetime.fromisoformat(
+                self.updated_at.replace("Z", "+00:00")
+            )
+
     class Meta:
         database = db
 
@@ -42,6 +60,7 @@ class CanonChapterType(Enum):
     SONG = "song"
     TROPARION = "troparion"
     KONTAKION = "kontakion"
+    STICHOS = "stichos"
 
     @classmethod
     def values(cls):
