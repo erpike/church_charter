@@ -1,5 +1,43 @@
 /* Custom styles for the canon detail page */
 
+/* Main background styling */
+body {
+    background-image: url('../images/church-background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+}
+
+/* Add a semi-transparent overlay to improve text readability */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.491);
+    z-index: -1;
+}
+
+/* White text for headings and form elements */
+h1, h2, h3, h4, h5, h6, .navbar-brand, .nav-link,
+label, input, .form-control {
+    color: #ffffff !important;
+}
+
+/* Style form inputs */
+.form-control {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
 /* Remove borders from list-group-items */
 .list-group-item {
     border: none !important;
