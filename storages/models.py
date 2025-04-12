@@ -81,14 +81,14 @@ class CanonChapterType(str, Enum):
     def display_name(self) -> str:
         """Get display name in Ukrainian."""
         return {
-            CanonChapterType.song: "пісня",
-            CanonChapterType.troparion: "тропар",
+            CanonChapterType.ikos: "ікос",
             CanonChapterType.kontakion: "кондак",
-            CanonChapterType.stichos: "стихіра",
             CanonChapterType.sessional_hymn: "сидален",
+            CanonChapterType.song: "пісня",
+            CanonChapterType.stichos: "стихіра",
             CanonChapterType.theotokion: "Богородичен",
             CanonChapterType.trinitarian: "Троїчен",
-            CanonChapterType.ikos: "ікос",
+            CanonChapterType.troparion: "тропар",
         }[self]
 
 
@@ -117,16 +117,17 @@ class CanonItemType(str, Enum):
     def display_name(self) -> str:
         """Get display name in Ukrainian."""
         return {
-            CanonItemType.refrain: "приспів",
-            CanonItemType.hirmos: "ірмос",
             CanonItemType.ikos: "ікос",
-            CanonItemType.song: "пісня",
-            CanonItemType.troparion: "тропар",
             CanonItemType.kontakion: "кондак",
-            CanonItemType.stichos: "стихіра",
             CanonItemType.sessional_hymn: "сидален",
+            CanonItemType.song: "пісня",
+            CanonItemType.stichos: "стихіра",
             CanonItemType.theotokion: "Богородичен",
             CanonItemType.trinitarian: "Троїчен",
+            CanonItemType.troparion: "тропар",
+            #
+            CanonItemType.refrain: "приспів",
+            CanonItemType.hirmos: "ірмос",
         }[self]
 
 
