@@ -80,6 +80,25 @@ class CanonChapterGroup(str, Enum):
         """Return all values as a comma-separated string for SQL."""
         return ", ".join(f"'{item.value}'" for item in cls)
 
+    @property
+    def display_name(self) -> str:
+        """Get display name in Ukrainian."""
+        return {
+            CanonChapterGroup.beginning: "Початок",
+            CanonChapterGroup.song1: "Пісня 1",
+            CanonChapterGroup.song2: "Пісня 2",
+            CanonChapterGroup.song3: "Пісня 3",
+            CanonChapterGroup.intermediate1: "Після пісні 3",
+            CanonChapterGroup.song4: "Пісня 4",
+            CanonChapterGroup.song5: "Пісня 5",
+            CanonChapterGroup.song6: "Пісня 6",
+            CanonChapterGroup.intermediate2: "Після пісні 6",
+            CanonChapterGroup.song7: "Пісня 7",
+            CanonChapterGroup.song8: "Пісня 8",
+            CanonChapterGroup.song9: "Пісня 9",
+            CanonChapterGroup.ending: "Кінець",
+        }[self]
+
 
 class CanonChapterType(str, Enum):
     """Types of chapters in a canon."""

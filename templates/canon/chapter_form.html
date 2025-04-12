@@ -35,6 +35,17 @@
                         </select>
                     </div>
                     <div class="mb-3">
+                        <label for="group" class="form-label">Група</label>
+                        <select class="form-select" id="group" name="group" required>
+                            <option value="">Виберіть групу</option>
+                            {% for group in chapter_groups %}
+                            <option value="{{ group.value }}" {% if chapter and chapter.group == group.value %}selected{% endif %}>
+                                {{ group.display_name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
                         <label for="position" class="form-label">Позиція</label>
                         <input type="number" class="form-control" id="position" name="position" value="{{ chapter.position if chapter else 0 }}" min="0">
                     </div>

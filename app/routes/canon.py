@@ -18,6 +18,7 @@ from storages.database import db
 from storages.models import (
     Canon,
     CanonChapter,
+    CanonChapterGroup,
     CanonChapterType,
     CanonItem,
     CanonItemType,
@@ -58,9 +59,10 @@ def create_chapter(canon_id):
         if request.method == "POST":
             title = request.form.get("title")
             chapter_type = request.form.get("type")
+            group = request.form.get("group")
             position = request.form.get("position", 0)
 
-            if not title or not chapter_type:
+            if not title or not chapter_type or not group:
                 flash("Всі поля повинні бути заповнені", "error")
                 return redirect(url_for("canon.create_chapter", canon_id=canon_id))
 
@@ -70,7 +72,11 @@ def create_chapter(canon_id):
                 position = 0
 
             CanonChapter.create(
-                canon=canon, title=title, type=chapter_type, position=position
+                canon=canon,
+                title=title,
+                type=chapter_type,
+                group=group,
+                position=position,
             )
             flash("Главу успішно створено", "success")
             return redirect(url_for("canon.detail", canon_id=canon_id))
@@ -79,6 +85,7 @@ def create_chapter(canon_id):
             "canon/chapter_form.html",
             canon=canon,
             chapter_types=CanonChapterType,
+            chapter_groups=CanonChapterGroup,
         )
 
 
@@ -95,9 +102,10 @@ def edit_chapter(chapter_id):
         if request.method == "POST":
             title = request.form.get("title")
             chapter_type = request.form.get("type")
+            group = request.form.get("group")
             position = request.form.get("position", 0)
 
-            if not title or not chapter_type:
+            if not title or not chapter_type or not group:
                 flash("Всі поля повинні бути заповнені", "error")
                 return redirect(url_for("canon.edit_chapter", chapter_id=chapter_id))
 
@@ -108,6 +116,7 @@ def edit_chapter(chapter_id):
 
             chapter.title = title
             chapter.type = chapter_type
+            chapter.group = group
             chapter.position = position
             chapter.save()
 
@@ -119,6 +128,7 @@ def edit_chapter(chapter_id):
             canon=chapter.canon,
             chapter=chapter,
             chapter_types=CanonChapterType,
+            chapter_groups=CanonChapterGroup,
         )
 
 
