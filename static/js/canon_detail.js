@@ -26,44 +26,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Sortable instances
-    let chaptersSortable = null;
     let itemsSortables = [];
     
     function initSortable() {
-        // init Sortable for chapters
-        const chaptersContainer = document.getElementById('chapters-container');
-        if (chaptersContainer) {
-            chaptersSortable = new Sortable(chaptersContainer, {
-                handle: '.drag-handle',
-                animation: 150,
-                onEnd: function(evt) {
-                    const chapters = Array.from(chaptersContainer.querySelectorAll('.chapter-item')).map((el, index) => {
-                        return {
-                            id: el.dataset.id,
-                            position: index
-                        };
-                    });
-                    
-                    // send updated positions to server
-                    fetch(window.canonData.updateChaptersUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ chapters: chapters }),
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            console.log('Позиції глав оновлено');
-                        } else {
-                            console.error('Помилка оновлення позицій глав');
-                        }
-                    });
-                }
-            });
-        }
-        
         // init Sortable for items in each chapter
         const itemsContainers = document.querySelectorAll('.items-container');
         itemsContainers.forEach(container => {
@@ -102,11 +67,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function destroySortable() {
-        if (chaptersSortable) {
-            chaptersSortable.destroy();
-            chaptersSortable = null;
-        }
-        
         itemsSortables.forEach(sortable => {
             sortable.destroy();
         });

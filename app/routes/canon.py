@@ -241,37 +241,6 @@ def delete_item(item_id):
         return redirect(url_for("canon.detail", canon_id=canon_id))
 
 
-@canon_bp.route("/<int:canon_id>/update-chapters-order", methods=["POST"])
-@login_required
-def update_chapters_order(canon_id):
-    """Update the order of chapters in a canon."""
-    with db:
-        canon = Canon.get_or_none(Canon.id == canon_id)
-        if canon is None:
-            return jsonify({"success": False, "message": "Канон не знайдено"}), 404
-
-        data = request.get_json()
-        if not data or "chapters" not in data:
-            return (
-                jsonify({"success": False, "message": "Неправильний формат даних"}),
-                400,
-            )
-
-        try:
-            for chapter_data in data["chapters"]:
-                chapter_id = chapter_data.get("id")
-                position = chapter_data.get("position", 0)
-
-                chapter = CanonChapter.get_or_none(CanonChapter.id == chapter_id)
-                if chapter and chapter.canon.id == canon_id:
-                    chapter.position = position
-                    chapter.save()
-
-            return jsonify({"success": True})
-        except Exception as e:
-            return jsonify({"success": False, "message": str(e)}), 500
-
-
 @canon_bp.route("/chapter/<int:chapter_id>/update-items-order", methods=["POST"])
 @login_required
 def update_items_order(chapter_id):
