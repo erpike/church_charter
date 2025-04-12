@@ -52,7 +52,7 @@
 {% if current_user.is_authenticated %}
 <script>
     window.canonData = {
-        id: {{ canon.id }},
+        id: '{{ canon.id }}',
         updateChaptersUrl: '{{ url_for("canon.update_chapters_order", canon_id=canon.id) }}',
         updateItemsUrl: '{{ url_for("canon.update_items_order", chapter_id=0) }}'
     };
