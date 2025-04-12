@@ -15,7 +15,7 @@
 </div>
 {% if chapter.items %}
     <div class="mt-2 items-container" data-chapter-id="{{ chapter.id }}">
-        {% for item in chapter.items %}
+        {% for item in chapter.items|sort(attribute='position') %}
             {{ canon_item(item, is_authenticated) }}
         {% endfor %}
     </div>

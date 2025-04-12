@@ -42,7 +42,6 @@ def detail(canon_id):
             "canon_detail.html",
             canon=canon,
             content=content,
-            CanonItemType=CanonItemType,
         )
 
 
