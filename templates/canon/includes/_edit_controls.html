@@ -1,0 +1,12 @@
+{% macro edit_controls(entity_type, entity_id, edit_url, delete_url) %}
+<div class="btn-group edit-mode-only" style="display: none;">
+    <a href="{{ edit_url }}" class="btn btn-sm btn-warning">
+        Редагувати
+    </a>
+    <form action="{{ delete_url }}" method="POST" class="d-inline">
+        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Ви впевнені, що хочете видалити цей {{ entity_type }}?')">
+            Видалити
+        </button>
+    </form>
+</div>
+{% endmacro %} 

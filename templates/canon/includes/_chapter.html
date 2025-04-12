@@ -1,0 +1,29 @@
+{% from "canon/includes/_edit_controls.html" import edit_controls %}
+{% from "canon/includes/_item.html" import canon_item %}
+
+{% macro canon_chapter(chapter, is_authenticated) %}
+<div class="list-group-item mb-3" data-id="{{ chapter.id }}">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="mb-0">
+            {% if is_authenticated %}
+            <span class="drag-handle edit-mode-only" style="cursor: move; margin-right: 10px; display: none;">☰</span>
+            {% endif %}
+            {{ chapter.title }}
+        </h5>
+        {% if is_authenticated %}
+            {{ edit_controls('главу', chapter.id, url_for('canon.edit_chapter', chapter_id=chapter.id), url_for('canon.delete_chapter', chapter_id=chapter.id)) }}
+        {% endif %}
+    </div>
+    {% if chapter.items %}
+        <div class="mt-2 items-container" data-chapter-id="{{ chapter.id }}">
+            {% for item in chapter.items %}
+                {{ canon_item(item, is_authenticated) }}
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info py-2">
+            Немає елементів у цій главі.
+        </div>
+    {% endif %}
+</div>
+{% endmacro %} 

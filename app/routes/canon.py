@@ -34,11 +34,14 @@ def detail(canon_id):
         canon = Canon.get_or_none(Canon.id == canon_id)
         if canon is None:
             abort(404)
+
+        # Get sorted content using the get_data method
+        content = canon.get_data()
+
         return render_template(
             "canon_detail.html",
             canon=canon,
-            CanonChapter=CanonChapter,
-            CanonItem=CanonItem,
+            content=content,
             CanonItemType=CanonItemType,
         )
 
