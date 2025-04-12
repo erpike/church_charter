@@ -4,6 +4,28 @@ globs:
 alwaysApply: true
 ---
 
+# Personal rules
+- Answer with the same languge of question
+- Add code comments only in English
+
 # Your rule content
 
-- Comment code only in English
+- Always prefer simple solutions
+- Avoid duplication of code whenever possible, which means checking for other areas of the codebase that might already have similar code and functionality
+- Write code that takes into account the different environments: dev, prod
+- You are careful to only make changes that are requested or you are confident are well understood and related to the changes being requested
+- When fixing an issue or bug, do not introduce a new pattern or technology without first exhausting all options for the existing implementation. And if you finally do this, make sure to remove the old implementation afterwards so we don't have duplicate logic
+- keep the codebase very clean and orginized
+- avoid writing scripts in files if possible, escpecially if the script is likeky only to be run once
+- avoid having files more than 500-600 lines of code. Refactor at that point.
+- mocking data is only needed for tests, never mock data for dev or prod
+- never add stubbing or fake data patterns to code that affects dev or prod environments
+- never orverwrite my .env file without first asking and confirming
+
+# coding workflow references
+
+- Focus on the areas of code relevant to the task
+- Do not touch code that is unrelated to the task
+- Write through tests for all major functionality
+- Avoid making major changes to the patterns and architecture of how a feture works, after it has shown to work well, unless explicitly instructured
+- Always think about what other method and areas of code might be affected by code changes
