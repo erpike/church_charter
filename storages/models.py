@@ -60,29 +60,17 @@ class User(BaseModel, UserMixin):
         table_name = "user"
 
 
-class Canon(BaseModel):
-    """Model representing a canon in the Orthodox Church."""
-
-    name = CharField(max_length=255)
-
-    class Meta:
-        table_name = "canon"
-
-    def __str__(self):
-        return self.name
-
-
 class CanonChapterType(str, Enum):
     """Types of chapters in a canon."""
 
-    song = "song"
-    troparion = "troparion"
+    ikos = "ikos"
     kontakion = "kontakion"
-    stichos = "stichos"
     sessional_hymn = "sessional hymn"
+    song = "song"
+    stichos = "stichos"
     theotokion = "theotokion"
     trinitarian = "trinitarian"
-    ikos = "ikos"
+    troparion = "troparion"
 
     @classmethod
     def values(cls):
@@ -104,38 +92,21 @@ class CanonChapterType(str, Enum):
         }[self]
 
 
-class CanonChapter(BaseModel):
-    """Model representing a chapter within a canon."""
-
-    canon = ForeignKeyField(Canon, backref="chapters", on_delete="CASCADE")
-    title = CharField(max_length=255)
-    position = IntegerField(default=0)
-    type = CharField(
-        max_length=32,
-        constraints=[Check(f"type IN ({CanonChapterType.values()})")],
-    )
-
-    class Meta:
-        table_name = "canonchapter"
-        indexes = ((("canon", "title"), True),)
-
-    def __str__(self):
-        return f"{self.canon.name} - {self.title}"
-
-
 class CanonItemType(str, Enum):
     """Types of items in a canon chapter."""
 
-    refrain = "refrain"
-    hirmos = "hirmos"
     ikos = "ikos"
-    song = "song"
-    troparion = "troparion"
     kontakion = "kontakion"
+    sessional_hymn = "sessional hymn"
+    song = "song"
     stichos = "stichos"
-    sessional_hymn = "sessional_hymn"
     theotokion = "theotokion"
     trinitarian = "trinitarian"
+    troparion = "troparion"
+
+    # unique for item:
+    refrain = "refrain"
+    hirmos = "hirmos"
 
     @classmethod
     def values(cls):
@@ -157,6 +128,37 @@ class CanonItemType(str, Enum):
             CanonItemType.theotokion: "Богородичен",
             CanonItemType.trinitarian: "Троїчен",
         }[self]
+
+
+class Canon(BaseModel):
+    """Model representing a canon in the Orthodox Church."""
+
+    name = CharField(max_length=255)
+
+    class Meta:
+        table_name = "canon"
+
+    def __str__(self):
+        return self.name
+
+
+class CanonChapter(BaseModel):
+    """Model representing a chapter within a canon."""
+
+    canon = ForeignKeyField(Canon, backref="chapters", on_delete="CASCADE")
+    title = CharField(max_length=255)
+    position = IntegerField(default=0)
+    type = CharField(
+        max_length=32,
+        constraints=[Check(f"type IN ({CanonChapterType.values()})")],
+    )
+
+    class Meta:
+        table_name = "canonchapter"
+        indexes = ((("canon", "title"), True),)
+
+    def __str__(self):
+        return f"{self.canon.name} - {self.title}"
 
 
 class CanonItem(BaseModel):

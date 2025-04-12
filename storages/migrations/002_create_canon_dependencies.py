@@ -9,8 +9,8 @@ def migrate(migrator, database, **kwargs):
             position INTEGER NOT NULL DEFAULT 0,
             type VARCHAR(32) NOT NULL CHECK (
                 type IN (
-                    'song', 'troparion', 'kontakion', 'stichos', 'sessional_hymn', 
-                    'theotokion', 'trinitarian', 'ikos'
+                    'ikos', 'kontakion', 'sessional_hymn', 'song', 'stichos', 
+                    'theotokion', trinitarian', 'troparion'
                 )
             ),
             created_at TIMESTAMP DEFAULT (datetime('now', 'utc')),
@@ -24,8 +24,9 @@ def migrate(migrator, database, **kwargs):
             chapter_id INTEGER NOT NULL, 
             type VARCHAR(32) NOT NULL CHECK (
                 type IN (
-                    'refrain', 'hirmos', 'ikos', 'song', 'troparion', 'kontakion',
-                    'stichos', 'sessional_hymn', 'theotokion', 'trinitarian'
+                    'refrain', 'hirmos',
+                    'ikos', 'kontakion', 'sessional_hymn', 
+                    'song', 'stichos', 'theotokion', trinitarian', 'troparion' 
                 )
             ),
             text TEXT NOT NULL,
