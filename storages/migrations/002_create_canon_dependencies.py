@@ -10,7 +10,14 @@ def migrate(migrator, database, **kwargs):
             type VARCHAR(32) NOT NULL CHECK (
                 type IN (
                     'ikos', 'kontakion', 'sessional_hymn', 'song', 'stichos', 
-                    'theotokion', trinitarian', 'troparion'
+                    'theotokion', 'trinitarian', 'troparion'
+                )
+            ),
+            "group" VARCHAR(32) NOT NULL CHECK (
+                "group" IN (
+                    'beginning', 'song1', 'song2', 'song3', 'intermediate1',
+                    'song4', 'song5', 'song6', 'intermediate2', 'song7',
+                    'song8', 'song9', 'ending'
                 )
             ),
             created_at TIMESTAMP DEFAULT (datetime('now', 'utc')),
@@ -21,12 +28,12 @@ def migrate(migrator, database, **kwargs):
     database.execute_sql("""
         CREATE TABLE IF NOT EXISTS canonitem (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            chapter_id INTEGER NOT NULL, 
+            chapter_id INTEGER NOT NULL,
             type VARCHAR(32) NOT NULL CHECK (
                 type IN (
                     'refrain', 'hirmos',
-                    'ikos', 'kontakion', 'sessional_hymn', 
-                    'song', 'stichos', 'theotokion', trinitarian', 'troparion' 
+                    'ikos', 'kontakion', 'sessional_hymn',
+                    'song', 'stichos', 'theotokion', 'trinitarian', 'troparion'
                 )
             ),
             text TEXT NOT NULL,

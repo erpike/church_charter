@@ -60,6 +60,27 @@ class User(BaseModel, UserMixin):
         table_name = "user"
 
 
+class CanonChapterGroup(str, Enum):
+    beginning = "beginning"
+    song1 = "song1"
+    song2 = "song2"
+    song3 = "song3"
+    intermediate1 = "intermediate1"
+    song4 = "song4"
+    song5 = "song5"
+    song6 = "song6"
+    intermediate2 = "intermediate2"
+    song7 = "song7"
+    song8 = "song8"
+    song9 = "song9"
+    ending = "ending"
+
+    @classmethod
+    def values(cls):
+        """Return all values as a comma-separated string for SQL."""
+        return ", ".join(f"'{item.value}'" for item in cls)
+
+
 class CanonChapterType(str, Enum):
     """Types of chapters in a canon."""
 
@@ -149,6 +170,10 @@ class CanonChapter(BaseModel):
     canon = ForeignKeyField(Canon, backref="chapters", on_delete="CASCADE")
     title = CharField(max_length=255)
     position = IntegerField(default=0)
+    group = CharField(
+        max_length=32,
+        constraints=[Check(f"type IN ({CanonChapterGroup.values()})")],
+    )
     type = CharField(
         max_length=32,
         constraints=[Check(f"type IN ({CanonChapterType.values()})")],
