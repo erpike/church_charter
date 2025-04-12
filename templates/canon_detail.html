@@ -31,7 +31,11 @@
             <div class="list-group" id="chapters-container">
                 {% for group, chapters in content.items() %}
                     {% for chapter_data in chapters %}
-                        {{ canon_chapter(chapter_data.chapter, current_user.is_authenticated) }}
+                        <div class="chapter-item" data-id="{{ chapter_data.chapter.id }}">
+                            <div class="list-group-item">
+                                {{ canon_chapter(chapter_data.chapter, current_user.is_authenticated) }}
+                            </div>
+                        </div>
                     {% endfor %}
                 {% endfor %}
             </div>
@@ -46,6 +50,13 @@
 
 {% block scripts %}
 {% if current_user.is_authenticated %}
+<script>
+    window.canonData = {
+        id: {{ canon.id }},
+        updateChaptersUrl: '{{ url_for("canon.update_chapters_order", canon_id=canon.id) }}',
+        updateItemsUrl: '{{ url_for("canon.update_items_order", chapter_id=0) }}'
+    };
+</script>
 <script src="{{ url_for('static', filename='js/canon_detail.js') }}"></script>
 {% endif %}
 {% endblock %}

@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 handle: '.drag-handle',
                 animation: 150,
                 onEnd: function(evt) {
-                    const chapters = Array.from(chaptersContainer.children).map((el, index) => {
+                    const chapters = Array.from(chaptersContainer.querySelectorAll('.chapter-item')).map((el, index) => {
                         return {
                             id: el.dataset.id,
                             position: index
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                     
                     // send updated positions to server
-                    fetch('{{ url_for("canon.update_chapters_order", canon_id=canon.id) }}', {
+                    fetch(window.canonData.updateChaptersUrl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                     
                     // send updated positions to server
-                    fetch(`{{ url_for("canon.update_items_order", chapter_id=0) }}`.replace('0', chapterId), {
+                    fetch(window.canonData.updateItemsUrl.replace('0', chapterId), {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
