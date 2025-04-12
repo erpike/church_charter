@@ -163,6 +163,44 @@ class Canon(BaseModel):
     def __str__(self):
         return self.name
 
+    def get_data(self):
+        """
+        Get canon content grouped by group and ordered by position.
+
+        Returns a dictionary where keys are group names and values are lists of
+        chapters with their sorted items.
+        """
+        # Get all chapters ordered by group and position
+        chapters = (
+            CanonChapter.select()
+            .where(CanonChapter.canon == self)
+            .order_by(CanonChapter.group, CanonChapter.position)
+        )
+
+        # Group chapters by their group
+        grouped_content = {}
+        for chapter in chapters:
+            if chapter.group not in grouped_content:
+                grouped_content[chapter.group] = []
+
+            # Get items for this chapter ordered by position
+            items = list(
+                CanonItem.select()
+                .where(CanonItem.chapter == chapter)
+                .order_by(CanonItem.position)
+            )
+
+            # Add chapter with its items to the group
+            grouped_content[chapter.group].append({"chapter": chapter, "items": items})
+
+        # Create ordered result following CanonChapterGroup order
+        ordered_content = {}
+        for group in CanonChapterGroup:
+            if group.value in grouped_content:
+                ordered_content[group.value] = grouped_content[group.value]
+
+        return ordered_content
+
 
 class CanonChapter(BaseModel):
     """Model representing a chapter within a canon."""
@@ -202,4 +240,4 @@ class CanonItem(BaseModel):
         table_name = "canonitem"
 
     def __str__(self):
-        return f"{self.canonchapter.title} - {self.type}"
+        return f"{self.chapter.title} - {self.type}"

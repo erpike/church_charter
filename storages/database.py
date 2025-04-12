@@ -23,7 +23,7 @@ def init_db(config=None):
     database = SqliteDatabase(
         config["name"],
         pragmas=config["pragmas"],
-        autoconnect=False,
+        autoconnect=config.get("autoconnect", True),
     )
 
     # Configure the proxy database
