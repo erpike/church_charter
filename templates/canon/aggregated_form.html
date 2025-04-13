@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}{% if canon %}Редагування зведеного канону{% else %}Створення зведеного канону{% endif %} - Послідування{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('admin.dashboard') }}">Адмін-панель</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{% if canon %}Редагування зведеного канону{% else %}Створення зведеного канону{% endif %}</li>
+            </ol>
+        </nav>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">{% if canon %}Редагування зведеного канону{% else %}Створення зведеного канону{% endif %}</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" id="aggregatedForm">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Назва зведеного канону</label>
+                        <input type="text" class="form-control" id="name" name="name" value="{{ canon.name if canon else '' }}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Виберіть канони для зведення</label>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <select class="form-select" id="availableCanons">
+                                    {% for c in canons %}
+                                    <option value="{{ c.id }}">{{ c.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <button type="button" class="btn btn-primary" onclick="addCanon()">Додати канон</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Вибрані канони</label>
+                        <div id="selectedCanons" class="list-group">
+                            {% if canon and current_links %}
+                            {% for link in current_links %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>{{ link.canon_id }}</span>
+                                <div>
+                                    <input type="hidden" name="canon_ids[]" value="{{ link.canon_id }}">
+                                    <input type="hidden" name="positions[]" value="{{ link.position }}">
+                                    <button type="button" class="btn btn-sm btn-danger" onclick="removeCanon(this)">Видалити</button>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">Назад</a>
+                        <button type="submit" class="btn btn-primary">{% if canon %}Зберегти зміни{% else %}Створити зведений канон{% endif %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+let positionCounter = 0;
+
+function addCanon() {
+    const select = document.getElementById('availableCanons');
+    const selectedOption = select.options[select.selectedIndex];
+    if (!selectedOption) return;
+
+    const canonId = selectedOption.value;
+    const canonName = selectedOption.text;
+
+    // Check if canon is already selected
+    const existingInputs = document.querySelectorAll(`input[name="canon_ids[]"][value="${canonId}"]`);
+    if (existingInputs.length > 0) return;
+
+    const div = document.createElement('div');
+    div.className = 'list-group-item d-flex justify-content-between align-items-center';
+    div.innerHTML = `
+        <span>${canonName}</span>
+        <div>
+            <input type="hidden" name="canon_ids[]" value="${canonId}">
+            <input type="hidden" name="positions[]" value="${positionCounter}">
+            <button type="button" class="btn btn-sm btn-danger" onclick="removeCanon(this)">Видалити</button>
+        </div>
+    `;
+
+    document.getElementById('selectedCanons').appendChild(div);
+    positionCounter++;
+}
+
+function removeCanon(button) {
+    button.closest('.list-group-item').remove();
+}
+</script>
+{% endblock %}
+{% endblock %} 

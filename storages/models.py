@@ -260,3 +260,93 @@ class CanonItem(BaseModel):
 
     def __str__(self):
         return f"{self.chapter.title} - {self.type}"
+
+
+class AggregatedCanon(BaseModel):
+    """Model representing an aggregated canon composed of multiple canons."""
+
+    name = CharField(max_length=255)
+    canon_ids = TextField(unique=True)
+
+    class Meta:
+        table_name = "aggregatedcanon"
+
+    def __str__(self):
+        return self.name
+
+    @classmethod
+    def find_existing_combination(cls, canon_ids):
+        """
+        Find an existing aggregated canon with the same combination of canons.
+
+        Args:
+            canon_ids: List of canon IDs in the order they should appear
+
+        Returns:
+            AggregatedCanon instance if found, None otherwise
+        """
+        # Convert list to string for comparison
+        canon_ids_str = ",".join(map(str, canon_ids))
+
+        try:
+            return cls.get(cls.canon_ids == canon_ids_str)
+        except cls.DoesNotExist:
+            return None
+
+    def get_data(self):
+        """
+        Get aggregated canon content grouped by group and ordered by position.
+
+        Returns a dictionary where keys are group names and values are lists of
+        chapters with their sorted items, ordered by:
+        1. CanonChapterGroup order
+        2. User-specified canon order
+        3. Chapter position within each canon
+        4. Item position within each chapter
+        """
+        # Parse canon IDs and their positions
+        canon_positions = [
+            (int(canon_id), pos)
+            for pos, canon_id in enumerate(self.canon_ids.split(","))
+        ]
+
+        # Group chapters by their group
+        grouped_content = {}
+        for canon_id, position in canon_positions:
+            canon = Canon.get_or_none(Canon.id == canon_id)
+            if not canon:
+                continue
+
+            # Get all chapters ordered by group and position
+            chapters = (
+                CanonChapter.select()
+                .where(CanonChapter.canon == canon)
+                .order_by(CanonChapter.group, CanonChapter.position)
+            )
+
+            for chapter in chapters:
+                if chapter.group not in grouped_content:
+                    grouped_content[chapter.group] = []
+
+                # Get items for this chapter ordered by position
+                items = list(
+                    CanonItem.select()
+                    .where(CanonItem.chapter == chapter)
+                    .order_by(CanonItem.position)
+                )
+
+                # Add chapter with its items to the group
+                grouped_content[chapter.group].append(
+                    {"chapter": chapter, "items": items, "canon_order": position}
+                )
+
+        # Create ordered result following CanonChapterGroup order
+        ordered_content = {}
+        for group in CanonChapterGroup:
+            if group.value in grouped_content:
+                # Sort chapters within each group by canon_order and position
+                chapters = grouped_content[group.value]
+                chapters.sort(key=lambda x: (x["canon_order"], x["chapter"].position))
+                ordered_content[group.value] = chapters
+
+        return ordered_content

@@ -16,6 +16,7 @@ from flask_login import login_required
 
 from storages.database import db
 from storages.models import (
+    AggregatedCanon,
     Canon,
     CanonChapter,
     CanonChapterGroup,
@@ -318,3 +319,149 @@ def download_docx(canon_id):
             as_attachment=True,
             download_name=f"{canon.name}.docx",
         )
+
+
+@canon_bp.route("/aggregated/create", methods=["GET", "POST"])
+@login_required
+def create_aggregated_canon():
+    """Create a new aggregated canon."""
+    with db:
+        if request.method == "POST":
+            name = request.form.get("name")
+            if not name:
+                flash("Назва зведеного канону не може бути порожньою", "error")
+                return redirect(url_for("canon.create_aggregated_canon"))
+
+            # Get selected canons and their positions
+            canon_ids = request.form.getlist("canon_ids[]")
+            positions = request.form.getlist("positions[]")
+
+            # Convert to list of tuples (canon_id, position) and sort by position
+            canon_positions = list(zip(canon_ids, positions))
+            canon_positions.sort(key=lambda x: int(x[1]))
+
+            # Extract sorted canon IDs
+            sorted_canon_ids = [canon_id for canon_id, _ in canon_positions]
+            canon_ids_str = ",".join(sorted_canon_ids)
+
+            # Check if this combination already exists
+            existing_canon = AggregatedCanon.find_existing_combination(sorted_canon_ids)
+            if existing_canon:
+                flash("Такий зведений канон вже існує", "info")
+                return redirect(
+                    url_for("canon.detail_aggregated", canon_id=existing_canon.id)
+                )
+
+            # Create the aggregated canon
+            aggregated_canon = AggregatedCanon.create(
+                name=name, canon_ids=canon_ids_str
+            )
+
+            flash("Зведений канон успішно створено", "success")
+            return redirect(
+                url_for("canon.detail_aggregated", canon_id=aggregated_canon.id)
+            )
+
+        # Get all canons for the dropdown
+        canons = list(Canon.select().order_by(Canon.name))
+        return render_template(
+            "canon/aggregated_form.html",
+            canons=canons,
+        )
+
+
+@canon_bp.route("/aggregated/<int:canon_id>")
+def detail_aggregated(canon_id):
+    """Display details of a specific aggregated canon."""
+    with db:
+        canon = AggregatedCanon.get_or_none(AggregatedCanon.id == canon_id)
+        if canon is None:
+            abort(404)
+
+        # Get sorted content using the get_data method
+        content = canon.get_data()
+
+        return render_template(
+            "canon/aggregated_detail.html",
+            canon=canon,
+            content=content,
+        )
+
+
+@canon_bp.route("/aggregated/<int:canon_id>/edit", methods=["GET", "POST"])
+@login_required
+def edit_aggregated_canon(canon_id):
+    """Edit an existing aggregated canon."""
+    with db:
+        canon = AggregatedCanon.get_or_none(AggregatedCanon.id == canon_id)
+        if canon is None:
+            flash("Зведений канон не знайдено", "error")
+            return redirect(url_for("canon.detail_aggregated", canon_id=canon_id))
+
+        if request.method == "POST":
+            name = request.form.get("name")
+            if not name:
+                flash("Назва зведеного канону не може бути порожньою", "error")
+                return redirect(
+                    url_for("canon.edit_aggregated_canon", canon_id=canon_id)
+                )
+
+            # Get selected canons and their positions
+            canon_ids = request.form.getlist("canon_ids[]")
+            positions = request.form.getlist("positions[]")
+
+            # Convert to list of tuples (canon_id, position) and sort by position
+            canon_positions = list(zip(canon_ids, positions))
+            canon_positions.sort(key=lambda x: int(x[1]))
+
+            # Extract sorted canon IDs
+            sorted_canon_ids = [canon_id for canon_id, _ in canon_positions]
+            canon_ids_str = ",".join(sorted_canon_ids)
+
+            # Check if this combination already exists (excluding current canon)
+            existing_canon = AggregatedCanon.find_existing_combination(sorted_canon_ids)
+            if existing_canon and existing_canon.id != canon.id:
+                flash("Такий зведений канон вже існує", "info")
+                return redirect(
+                    url_for("canon.detail_aggregated", canon_id=existing_canon.id)
+                )
+
+            # Update the aggregated canon
+            canon.name = name
+            canon.canon_ids = canon_ids_str
+            canon.save()
+
+            flash("Зведений канон успішно оновлено", "success")
+            return redirect(url_for("canon.detail_aggregated", canon_id=canon.id))
+
+        # Get all canons for the dropdown
+        all_canons = list(Canon.select().order_by(Canon.name))
+
+        # Get current canon IDs and their positions
+        current_canon_ids = canon.canon_ids.split(",")
+        current_links = [
+            {"canon_id": canon_id, "position": pos}
+            for pos, canon_id in enumerate(current_canon_ids)
+        ]
+
+        return render_template(
+            "canon/aggregated_form.html",
+            canon=canon,
+            canons=all_canons,
+            current_links=current_links,
+        )
+
+
+@canon_bp.route("/aggregated/<int:canon_id>/delete", methods=["POST"])
+@login_required
+def delete_aggregated_canon(canon_id):
+    """Delete an aggregated canon."""
+    with db:
+        canon = AggregatedCanon.get_or_none(AggregatedCanon.id == canon_id)
+        if canon is None:
+            flash("Зведений канон не знайдено", "error")
+            return redirect(url_for("canon.detail_aggregated", canon_id=canon_id))
+
+        canon.delete_instance()
+        flash("Зведений канон успішно видалено", "success")
+        return redirect(url_for("canon.detail_aggregated", canon_id=canon_id))
