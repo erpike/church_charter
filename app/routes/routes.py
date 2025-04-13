@@ -4,6 +4,7 @@ from storages.database import db
 from storages.models import Canon
 
 from .admin import admin_bp
+from .aggregated_canon import aggregated_canon_bp
 from .canon import canon_bp
 
 
@@ -12,6 +13,7 @@ def init_routes(app):
     # Register blueprints
     app.register_blueprint(admin_bp)
     app.register_blueprint(canon_bp)
+    app.register_blueprint(aggregated_canon_bp)
 
     @app.route("/")
     def index():
