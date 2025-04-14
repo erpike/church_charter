@@ -56,6 +56,7 @@ def create():
         return render_template(
             "canon/aggregated_form.html",
             canons=canons,
+            current_links=[],
         )
 
 
@@ -125,9 +126,13 @@ def edit(canon_id):
         all_canons = list(Canon.select().order_by(Canon.name))
 
         # Get current canon IDs and their positions
-        current_canon_ids = canon.canon_ids.split(",")
+        current_canon_ids = canon.canon_ids.split(",") if canon.canon_ids else []
         current_links = [
-            {"canon_id": canon_id, "position": pos}
+            {
+                "canon_id": canon_id,
+                "canon_name": Canon.get_by_id(canon_id).name,
+                "position": pos,
+            }
             for pos, canon_id in enumerate(current_canon_ids)
         ]
 

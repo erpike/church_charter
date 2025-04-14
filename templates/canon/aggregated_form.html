@@ -45,7 +45,7 @@
                             {% if canon and current_links %}
                             {% for link in current_links %}
                             <div class="list-group-item d-flex justify-content-between align-items-center">
-                                <span>{{ link.canon_id }}</span>
+                                <span>{{ link.canon_name }}</span>
                                 <div>
                                     <input type="hidden" name="canon_ids[]" value="{{ link.canon_id }}">
                                     <input type="hidden" name="positions[]" value="{{ link.position }}">

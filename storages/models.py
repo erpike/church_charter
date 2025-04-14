@@ -305,6 +305,10 @@ class AggregatedCanon(BaseModel):
         4. Item position within each chapter
         """
         # Parse canon IDs and their positions
+
+        if not self.canon_ids:
+            return {}
+
         canon_positions = [
             (int(canon_id), pos)
             for pos, canon_id in enumerate(self.canon_ids.split(","))
