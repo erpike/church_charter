@@ -156,4 +156,4 @@ def delete(canon_id):
 
         canon.delete_instance()
         flash("Зведений канон успішно видалено", "success")
-        return redirect(url_for("aggregated_canon.detail", canon_id=canon_id))
+        return redirect(url_for("admin.dashboard", canon_id=canon_id))
