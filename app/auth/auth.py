@@ -61,7 +61,7 @@ def login():
             next_page = request.args.get("next")
             return redirect(next_page or url_for("index"))
         else:
-            flash("Невірне ім'я користувача або пароль")
+            flash("Невірне ім'я користувача або пароль", "error")
 
     return render_template("login.html")
 

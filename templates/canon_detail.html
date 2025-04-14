@@ -1,17 +1,16 @@
 {% extends "base.html" %}
 {% from "canon/includes/_chapter.html" import canon_chapter %}
+{% from "includes/macros.html" import breadcrumb %}
 
 {% block title %}{{ canon.name }} - Послідування{% endblock %}
 
 {% block content %}
 <div class="row">
     <div class="col-12">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Канони</a></li>
-                <li class="breadcrumb-item active" aria-current="page">{{ canon.name }}</li>
-            </ol>
-        </nav>
+        {{ breadcrumb([
+            {'text': 'Канони', 'url': url_for('index')},
+            {'text': canon.name}
+        ]) }}
 
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h1>{{ canon.name }}</h1>

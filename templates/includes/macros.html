@@ -1,0 +1,33 @@
+{% macro flash_messages() %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+{% endmacro %}
+
+{% macro form_input(name, label, type='text', required=false) %}
+    <div class="mb-3">
+        <label for="{{ name }}" class="form-label">{{ label }}</label>
+        <input type="{{ type }}" class="form-control" id="{{ name }}" name="{{ name }}" {% if required %}required{% endif %}>
+    </div>
+{% endmacro %}
+
+{% macro breadcrumb(items) %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            {% for item in items %}
+                {% if item.url %}
+                    <li class="breadcrumb-item"><a href="{{ item.url }}">{{ item.text }}</a></li>
+                {% else %}
+                    <li class="breadcrumb-item active" aria-current="page">{{ item.text }}</li>
+                {% endif %}
+            {% endfor %}
+        </ol>
+    </nav>
+{% endmacro %} 
