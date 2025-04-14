@@ -18,7 +18,7 @@
                 </p>
             </div>
             {% if is_authenticated %}
-                {{ edit_controls('елемент', item.id, url_for('canon.edit_item', item_id=item.id), url_for('canon.delete_item', item_id=item.id)) }}
+                {{ edit_controls('елемент', item.id, url_for('chapter.edit_item', item_id=item.id), url_for('chapter.delete_item', item_id=item.id)) }}
             {% endif %}
         </div>
     </div>

@@ -7,7 +7,7 @@
         {{ chapter.title }}
     </h5>
     {% if is_authenticated %}
-        {{ edit_controls('главу', chapter.id, url_for('canon.edit_chapter', chapter_id=chapter.id), url_for('canon.delete_chapter', chapter_id=chapter.id)) }}
+        {{ edit_controls('главу', chapter.id, url_for('chapter.edit', chapter_id=chapter.id), url_for('chapter.delete', chapter_id=chapter.id)) }}
     {% endif %}
 </div>
 {% if chapter.items %}
@@ -23,7 +23,7 @@
 {% endif %}
 {% if is_authenticated %}
     <div class="mt-1 edit-mode-only" style="display: none;">
-        <a href="{{ url_for('canon.create_item', chapter_id=chapter.id) }}" class="btn btn-sm btn-primary">
+        <a href="{{ url_for('chapter.create_item', chapter_id=chapter.id) }}" class="btn btn-sm btn-primary">
             Додати елемент
         </a>
     </div>

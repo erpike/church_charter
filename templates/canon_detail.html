@@ -19,7 +19,7 @@
                     Завантажити як DOCX
                 </a>
                 {% if current_user.is_authenticated %}
-                <a href="{{ url_for('canon.create_chapter', canon_id=canon.id) }}" class="btn btn-primary edit-mode-only" style="display: none;">
+                <a href="{{ url_for('chapter.create', canon_id=canon.id) }}" class="btn btn-primary edit-mode-only" style="display: none;">
                     Додати главу
                 </a>
                 <button id="toggleEditMode" class="btn btn-primary">
@@ -55,7 +55,7 @@
 <script>
     window.canonData = {
         id: '{{ canon.id }}',
-        updateItemsUrl: '{{ url_for("canon.update_items_order", chapter_id=0) }}'
+        updateItemsUrl: '{{ url_for("chapter.update_items_order", chapter_id=0) }}'
     };
 </script>
 <script src="{{ url_for('static', filename='js/canon_detail.js') }}"></script>
