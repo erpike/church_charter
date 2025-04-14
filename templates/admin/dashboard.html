@@ -3,49 +3,84 @@
 {% block title %}Адмін-панель - Послідування{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-12">
-        <h1 class="mb-1">Адмін-панель</h1>
-        
-        <div class="card mb-1">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Управління канонами</h5>
-                <div>
-                    <a href="{{ url_for('aggregated_canon.create') }}" class="btn btn-success me-2">Звести канон</a>
-                    <a href="{{ url_for('admin.create_canon') }}" class="btn btn-primary">Створити новий канон</a>
+<div class="bg-white shadow overflow-hidden sm:rounded-lg">
+    <div class="px-4 py-5 sm:px-6">
+        <h1 class="text-2xl font-bold text-gray-900">Адмін-панель</h1>
+    </div>
+    
+    <div class="border-t border-gray-200">
+        <div class="px-4 py-5 sm:px-6">
+            <div class="flex justify-between items-center">
+                <h2 class="text-lg font-medium text-gray-900">Управління канонами</h2>
+                <div class="space-x-3">
+                    <a href="{{ url_for('aggregated_canon.create') }}" 
+                       class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                        Звести канон
+                    </a>
+                    <a href="{{ url_for('admin.create_canon') }}" 
+                       class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                        Створити новий канон
+                    </a>
                 </div>
             </div>
-            <div class="card-body">
-                {% if canons %}
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Назва</th>
-                                <th>Дії</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for canon in canons %}
-                            <tr>
-                                <td><a href="{{ url_for('canon.detail', canon_id=canon.id) }}">{{ canon.name }}</a></td>
-                                <td>
-                                    <a href="{{ url_for('admin.edit_canon', canon_id=canon.id) }}" class="btn btn-sm btn-warning">Редагувати</a>
-                                    <form action="{{ url_for('admin.delete_canon', canon_id=canon.id) }}" method="POST" class="d-inline">
-                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Ви впевнені, що хочете видалити цей канон?')">Видалити</button>
-                                    </form>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                {% else %}
-                <div class="alert alert-info">
-                    Немає доступних канонів.
-                </div>
-                {% endif %}
+        </div>
+
+        <div class="px-4 py-5 sm:px-6">
+            {% if canons %}
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Назва
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Дії
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for canon in canons %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <a href="{{ url_for('canon.detail', canon_id=canon.id) }}" class="text-primary hover:text-primary-dark">
+                                    {{ canon.name }}
+                                </a>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap space-x-2">
+                                <a href="{{ url_for('admin.edit_canon', canon_id=canon.id) }}" 
+                                   class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
+                                    Редагувати
+                                </a>
+                                <form action="{{ url_for('admin.delete_canon', canon_id=canon.id) }}" method="POST" class="inline-block">
+                                    <button type="submit" 
+                                            onclick="return confirm('Ви впевнені, що хочете видалити цей канон?')"
+                                            class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                                        Видалити
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
+            {% else %}
+            <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-blue-700">
+                            Немає доступних канонів.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
         </div>
     </div>
 </div>

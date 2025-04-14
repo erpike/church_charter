@@ -1,24 +1,26 @@
 {% from "canon/includes/_edit_controls.html" import edit_controls %}
 
 {% macro canon_item(item, is_authenticated) %}
-<div class="card mb-2" data-id="{{ item.id }}">
-    <div class="card-body py-2">
-        <div class="d-flex justify-content-between align-items-start">
-            <div>
-                <p class="card-text mb-0">
-                    {% if is_authenticated %}
-                    <span class="drag-handle edit-mode-only" style="cursor: move; margin-right: 10px; display: none;">☰</span>
-                    {% endif %}
+<div class="bg-white rounded-lg shadow-sm border border-gray-200" data-id="{{ item.id }}">
+    <div class="p-4">
+        <div class="flex justify-between items-start">
+            <div class="flex-grow">
+                {% if is_authenticated %}
+                <span class="drag-handle edit-mode-only hidden inline-block mr-2 text-gray-400 cursor-move">☰</span>
+                {% endif %}
+                <div class="text-gray-900">
                     {% if item.type == 'hirmos' %}
-                        <strong>Ирмос:</strong>
+                        <span class="font-medium">Ирмос:</span>
                     {% elif item.type == 'refrain' %}
-                        <strong>Припев:</strong>
+                        <span class="font-medium">Припев:</span>
                     {% endif %}
                     <span>{{ item.text }}</span>
-                </p>
+                </div>
             </div>
             {% if is_authenticated %}
-                {{ edit_controls('елемент', item.id, url_for('chapter.edit_item', item_id=item.id), url_for('chapter.delete_item', item_id=item.id)) }}
+                <div class="ml-4 flex-shrink-0">
+                    {{ edit_controls('елемент', item.id, url_for('chapter.edit_item', item_id=item.id), url_for('chapter.delete_item', item_id=item.id)) }}
+                </div>
             {% endif %}
         </div>
     </div>

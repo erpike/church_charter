@@ -3,66 +3,106 @@
 {% block title %}{% if canon %}Редагування зведеного канону{% else %}Створення зведеного канону{% endif %} - Послідування{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-12">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ url_for('admin.dashboard') }}">Адмін-панель</a></li>
-                <li class="breadcrumb-item active" aria-current="page">{% if canon %}Редагування зведеного канону{% else %}Створення зведеного канону{% endif %}</li>
+<div class="bg-white shadow overflow-hidden sm:rounded-lg">
+    <div class="px-4 py-5 sm:px-6">
+        <nav class="flex" aria-label="Breadcrumb">
+            <ol class="flex items-center space-x-4">
+                <li>
+                    <div>
+                        <a href="{{ url_for('admin.dashboard') }}" class="text-gray-400 hover:text-gray-500">
+                            Адмін-панель
+                        </a>
+                    </div>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <svg class="flex-shrink-0 h-5 w-5 text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                            <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
+                        </svg>
+                        <span class="ml-4 text-sm font-medium text-gray-500" aria-current="page">
+                            {% if canon %}Редагування зведеного канону{% else %}Створення зведеного канону{% endif %}
+                        </span>
+                    </div>
+                </li>
             </ol>
         </nav>
+    </div>
 
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">{% if canon %}Редагування зведеного канону{% else %}Створення зведеного канону{% endif %}</h5>
-            </div>
-            <div class="card-body">
-                <form method="POST" id="aggregatedForm">
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Назва зведеного канону</label>
-                        <input type="text" class="form-control" id="name" name="name" value="{{ canon.name if canon else '' }}" required>
+    <div class="border-t border-gray-200">
+        <div class="px-4 py-5 sm:px-6">
+            <h2 class="text-lg font-medium leading-6 text-gray-900 mb-4">
+                {% if canon %}Редагування зведеного канону{% else %}Створення зведеного канону{% endif %}
+            </h2>
+            
+            <form method="POST" id="aggregatedForm" class="space-y-6">
+                <div class="space-y-1">
+                    <label for="name" class="block text-sm font-medium text-gray-700">
+                        Назва зведеного канону
+                    </label>
+                    <input type="text" 
+                           name="name" 
+                           id="name" 
+                           value="{{ canon.name if canon else '' }}"
+                           required
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+                </div>
+
+                <div class="space-y-1">
+                    <label class="block text-sm font-medium text-gray-700">
+                        Виберіть канони для зведення
+                    </label>
+                    <div class="mt-1 flex space-x-4">
+                        <div class="flex-1">
+                            <select id="availableCanons" 
+                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+                                {% for c in canons %}
+                                <option value="{{ c.id }}">{{ c.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="button" 
+                                onclick="addCanon()"
+                                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                            Додати канон
+                        </button>
                     </div>
+                </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Виберіть канони для зведення</label>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <select class="form-select" id="availableCanons">
-                                    {% for c in canons %}
-                                    <option value="{{ c.id }}">{{ c.name }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <button type="button" class="btn btn-primary" onclick="addCanon()">Додати канон</button>
+                <div class="space-y-1">
+                    <label class="block text-sm font-medium text-gray-700">
+                        Вибрані канони
+                    </label>
+                    <div id="selectedCanons" class="mt-1 space-y-2">
+                        {% if canon and current_links %}
+                        {% for link in current_links %}
+                        <div class="flex justify-between items-center p-3 bg-gray-50 rounded-md border border-gray-200">
+                            <span class="text-sm text-gray-900">{{ link.canon_name }}</span>
+                            <div>
+                                <input type="hidden" name="canon_ids[]" value="{{ link.canon_id }}">
+                                <input type="hidden" name="positions[]" value="{{ link.position }}">
+                                <button type="button" 
+                                        onclick="removeCanon(this)"
+                                        class="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                                    Видалити
+                                </button>
                             </div>
                         </div>
+                        {% endfor %}
+                        {% endif %}
                     </div>
+                </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Вибрані канони</label>
-                        <div id="selectedCanons" class="list-group">
-                            {% if canon and current_links %}
-                            {% for link in current_links %}
-                            <div class="list-group-item d-flex justify-content-between align-items-center">
-                                <span>{{ link.canon_name }}</span>
-                                <div>
-                                    <input type="hidden" name="canon_ids[]" value="{{ link.canon_id }}">
-                                    <input type="hidden" name="positions[]" value="{{ link.position }}">
-                                    <button type="button" class="btn btn-sm btn-danger" onclick="removeCanon(this)">Видалити</button>
-                                </div>
-                            </div>
-                            {% endfor %}
-                            {% endif %}
-                        </div>
-                    </div>
-
-                    <div class="d-flex justify-content-between">
-                        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">Назад</a>
-                        <button type="submit" class="btn btn-primary">{% if canon %}Зберегти зміни{% else %}Створити зведений канон{% endif %}</button>
-                    </div>
-                </form>
-            </div>
+                <div class="flex justify-between pt-5">
+                    <a href="{{ url_for('admin.dashboard') }}" 
+                       class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                        Назад
+                    </a>
+                    <button type="submit" 
+                            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                        {% if canon %}Зберегти зміни{% else %}Створити зведений канон{% endif %}
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -84,13 +124,17 @@ function addCanon() {
     if (existingInputs.length > 0) return;
 
     const div = document.createElement('div');
-    div.className = 'list-group-item d-flex justify-content-between align-items-center';
+    div.className = 'flex justify-between items-center p-3 bg-gray-50 rounded-md border border-gray-200';
     div.innerHTML = `
-        <span>${canonName}</span>
+        <span class="text-sm text-gray-900">${canonName}</span>
         <div>
             <input type="hidden" name="canon_ids[]" value="${canonId}">
             <input type="hidden" name="positions[]" value="${positionCounter}">
-            <button type="button" class="btn btn-sm btn-danger" onclick="removeCanon(this)">Видалити</button>
+            <button type="button" 
+                    onclick="removeCanon(this)"
+                    class="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                Видалити
+            </button>
         </div>
     `;
 
@@ -99,7 +143,7 @@ function addCanon() {
 }
 
 function removeCanon(button) {
-    button.closest('.list-group-item').remove();
+    button.closest('div[class^="flex justify-between"]').remove();
 }
 </script>
 {% endblock %}

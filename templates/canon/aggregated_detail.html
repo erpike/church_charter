@@ -3,44 +3,75 @@
 {% block title %}{{ canon.name }} - Послідування{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-12">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ url_for('admin.dashboard') }}">Адмін-панель</a></li>
-                <li class="breadcrumb-item active" aria-current="page">{{ canon.name }}</li>
+<div class="bg-white shadow overflow-hidden sm:rounded-lg">
+    <div class="px-4 py-5 sm:px-6">
+        <nav class="flex" aria-label="Breadcrumb">
+            <ol class="flex items-center space-x-4">
+                <li>
+                    <div>
+                        <a href="{{ url_for('admin.dashboard') }}" class="text-gray-400 hover:text-gray-500">
+                            Адмін-панель
+                        </a>
+                    </div>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <svg class="flex-shrink-0 h-5 w-5 text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                            <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
+                        </svg>
+                        <span class="ml-4 text-sm font-medium text-gray-500" aria-current="page">
+                            {{ canon.name }}
+                        </span>
+                    </div>
+                </li>
             </ol>
         </nav>
+    </div>
 
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">{{ canon.name }}</h5>
-                <div>
-                    <a href="{{ url_for('aggregated_canon.edit', canon_id=canon.id) }}" class="btn btn-warning">Редагувати</a>
-                    <form action="{{ url_for('aggregated_canon.delete', canon_id=canon.id) }}" method="POST" class="d-inline">
-                        <button type="submit" class="btn btn-danger" onclick="return confirm('Ви впевнені, що хочете видалити цей зведений канон?')">Видалити</button>
+    <div class="border-t border-gray-200">
+        <div class="px-4 py-5 sm:px-6">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-2xl font-bold text-gray-900">{{ canon.name }}</h1>
+                <div class="flex space-x-3">
+                    <a href="{{ url_for('aggregated_canon.edit', canon_id=canon.id) }}" 
+                       class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
+                        Редагувати
+                    </a>
+                    <form action="{{ url_for('aggregated_canon.delete', canon_id=canon.id) }}" method="POST" class="inline-block">
+                        <button type="submit" 
+                                onclick="return confirm('Ви впевнені, що хочете видалити цей зведений канон?')"
+                                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                            Видалити
+                        </button>
                     </form>
                 </div>
             </div>
-            <div class="card-body">
+
+            <div class="space-y-6">
                 {% for group, chapters in content.items() %}
-                <div class="mb-4">
-                    <h6 class="text-muted">{{ group }}</h6>
-                    {% for chapter_data in chapters %}
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            <h6 class="mb-0">{{ chapter_data.chapter.title }}</h6>
-                        </div>
-                        <div class="card-body">
-                            {% for item in chapter_data["items"] %}
-                            <div class="mb-2">
-                                <small class="text-muted">{{ item.type }}</small>
-                                <p class="mb-0">{{ item.text }}</p>
+                <div>
+                    <h2 class="text-lg font-medium text-gray-500 mb-4">{{ group }}</h2>
+                    <div class="space-y-4">
+                        {% for chapter_data in chapters %}
+                        <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                            <div class="px-4 py-3 bg-gray-50 border-b border-gray-200">
+                                <h3 class="text-lg font-medium text-gray-900">
+                                    {{ chapter_data.chapter.title }}
+                                </h3>
                             </div>
-                            {% endfor %}
+                            <div class="px-4 py-4 space-y-3">
+                                {% for item in chapter_data["items"] %}
+                                <div>
+                                    {% if item.type %}
+                                    <span class="text-sm font-medium text-gray-500">{{ item.type }}</span>
+                                    {% endif %}
+                                    <p class="text-gray-900 mt-1">{{ item.text }}</p>
+                                </div>
+                                {% endfor %}
+                            </div>
                         </div>
+                        {% endfor %}
                     </div>
-                    {% endfor %}
                 </div>
                 {% endfor %}
             </div>

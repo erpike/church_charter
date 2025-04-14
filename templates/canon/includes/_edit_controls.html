@@ -1,10 +1,13 @@
 {% macro edit_controls(entity_type, entity_id, edit_url, delete_url) %}
-<div class="btn-group edit-mode-only" style="display: none;">
-    <a href="{{ edit_url }}" class="btn btn-sm btn-warning">
+<div class="edit-mode-only hidden space-x-2">
+    <a href="{{ edit_url }}" 
+       class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
         Редагувати
     </a>
-    <form action="{{ delete_url }}" method="POST" class="d-inline">
-        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Ви впевнені, що хочете видалити цей {{ entity_type }}?')">
+    <form action="{{ delete_url }}" method="POST" class="inline-block">
+        <button type="submit" 
+                onclick="return confirm('Ви впевнені, що хочете видалити цей {{ entity_type }}?')"
+                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
             Видалити
         </button>
     </form>

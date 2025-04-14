@@ -2,30 +2,46 @@
 {% from "canon/includes/_item.html" import canon_item %}
 
 {% macro canon_chapter(chapter, is_authenticated) %}
-<div class="d-flex justify-content-between align-items-center mb-1">
-    <h5 class="mb-0">
-        {{ chapter.title }}
-    </h5>
+<div class="space-y-4">
+    <div class="flex justify-between items-center">
+        <h2 class="text-lg font-medium text-gray-900">
+            {{ chapter.title }}
+        </h2>
+        {% if is_authenticated %}
+            {{ edit_controls('главу', chapter.id, url_for('chapter.edit', chapter_id=chapter.id), url_for('chapter.delete', chapter_id=chapter.id)) }}
+        {% endif %}
+    </div>
+
+    {% if chapter.items %}
+        <div class="space-y-3 items-container" data-chapter-id="{{ chapter.id }}">
+            {% for item in chapter.items|sort(attribute='position') %}
+                {{ canon_item(item, is_authenticated) }}
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm text-blue-700">
+                        Немає елементів у цій главі.
+                    </p>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
     {% if is_authenticated %}
-        {{ edit_controls('главу', chapter.id, url_for('chapter.edit', chapter_id=chapter.id), url_for('chapter.delete', chapter_id=chapter.id)) }}
+        <div class="edit-mode-only hidden">
+            <a href="{{ url_for('chapter.create_item', chapter_id=chapter.id) }}" 
+               class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                Додати елемент
+            </a>
+        </div>
     {% endif %}
 </div>
-{% if chapter.items %}
-    <div class="mt-1 items-container" data-chapter-id="{{ chapter.id }}">
-        {% for item in chapter.items|sort(attribute='position') %}
-            {{ canon_item(item, is_authenticated) }}
-        {% endfor %}
-    </div>
-{% else %}
-    <div class="alert alert-info py-1">
-        Немає елементів у цій главі.
-    </div>
-{% endif %}
-{% if is_authenticated %}
-    <div class="mt-1 edit-mode-only" style="display: none;">
-        <a href="{{ url_for('chapter.create_item', chapter_id=chapter.id) }}" class="btn btn-sm btn-primary">
-            Додати елемент
-        </a>
-    </div>
-{% endif %}
 {% endmacro %} 

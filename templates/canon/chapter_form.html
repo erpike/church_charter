@@ -1,31 +1,71 @@
 {% extends "base.html" %}
 
-{% block title %}{% if chapter %}Редагування глави{% else %}Створення глави{% endif %} - {{ canon.name }}{% endblock %}
+{% block title %}{% if chapter %}Редагування глави{% else %}Створення глави{% endif %} - Послідування{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-12">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Канони</a></li>
-                <li class="breadcrumb-item"><a href="{{ url_for('canon.detail', canon_id=canon.id) }}">{{ canon.name }}</a></li>
-                <li class="breadcrumb-item active" aria-current="page">{% if chapter %}Редагування глави{% else %}Створення глави{% endif %}</li>
+<div class="bg-white shadow overflow-hidden sm:rounded-lg">
+    <div class="px-4 py-5 sm:px-6">
+        <nav class="flex" aria-label="Breadcrumb">
+            <ol class="flex items-center space-x-4">
+                <li>
+                    <div>
+                        <a href="{{ url_for('admin.dashboard') }}" class="text-gray-400 hover:text-gray-500">
+                            Адмін-панель
+                        </a>
+                    </div>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <svg class="flex-shrink-0 h-5 w-5 text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                            <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
+                        </svg>
+                        <a href="{{ url_for('canon.detail', canon_id=canon.id) }}" class="ml-4 text-gray-400 hover:text-gray-500">
+                            {{ canon.name }}
+                        </a>
+                    </div>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <svg class="flex-shrink-0 h-5 w-5 text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                            <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
+                        </svg>
+                        <span class="ml-4 text-sm font-medium text-gray-500" aria-current="page">
+                            {% if chapter %}Редагування глави{% else %}Створення глави{% endif %}
+                        </span>
+                    </div>
+                </li>
             </ol>
         </nav>
+    </div>
 
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">{% if chapter %}Редагування глави{% else %}Створення глави{% endif %}</h5>
-            </div>
-            <div class="card-body">
-                <form method="POST">
-                    <div class="mb-3">
-                        <label for="title" class="form-label">Назва глави</label>
-                        <input type="text" class="form-control" id="title" name="title" value="{{ chapter.title if chapter else '' }}" required>
+    <div class="border-t border-gray-200">
+        <div class="px-4 py-5 sm:px-6">
+            <h2 class="text-lg font-medium leading-6 text-gray-900 mb-4">
+                {% if chapter %}Редагування глави{% else %}Створення глави{% endif %}
+            </h2>
+            
+            <form method="POST" class="space-y-6">
+                <div class="space-y-4">
+                    <div>
+                        <label for="title" class="block text-sm font-medium text-gray-700">
+                            Назва глави
+                        </label>
+                        <input type="text" 
+                               name="title" 
+                               id="title" 
+                               value="{{ chapter.title if chapter else '' }}"
+                               required
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 sm:text-sm">
                     </div>
-                    <div class="mb-3">
-                        <label for="type" class="form-label">Тип глави</label>
-                        <select class="form-select" id="type" name="type" required>
+
+                    <div>
+                        <label for="type" class="block text-sm font-medium text-gray-700">
+                            Тип глави
+                        </label>
+                        <select name="type" 
+                                id="type" 
+                                required
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 sm:text-sm">
                             <option value="">Виберіть тип</option>
                             {% for type in chapter_types %}
                             <option value="{{ type.value }}" {% if chapter and chapter.type == type.value %}selected{% endif %}>
@@ -34,9 +74,15 @@
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="mb-3">
-                        <label for="group" class="form-label">Група</label>
-                        <select class="form-select" id="group" name="group" required>
+
+                    <div>
+                        <label for="group" class="block text-sm font-medium text-gray-700">
+                            Група
+                        </label>
+                        <select name="group" 
+                                id="group" 
+                                required
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 sm:text-sm">
                             <option value="">Виберіть групу</option>
                             {% for group in chapter_groups %}
                             <option value="{{ group.value }}" {% if chapter and chapter.group == group.value %}selected{% endif %}>
@@ -45,16 +91,31 @@
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="mb-3">
-                        <label for="position" class="form-label">Позиція</label>
-                        <input type="number" class="form-control" id="position" name="position" value="{{ chapter.position if chapter else 0 }}" min="0">
+
+                    <div>
+                        <label for="position" class="block text-sm font-medium text-gray-700">
+                            Позиція
+                        </label>
+                        <input type="number" 
+                               name="position" 
+                               id="position" 
+                               value="{{ chapter.position if chapter else 0 }}"
+                               min="0"
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 sm:text-sm">
                     </div>
-                    <div class="d-flex justify-content-between">
-                        <a href="{{ url_for('canon.detail', canon_id=canon.id) }}" class="btn btn-secondary">Назад</a>
-                        <button type="submit" class="btn btn-primary">{% if chapter %}Зберегти зміни{% else %}Створити главу{% endif %}</button>
-                    </div>
-                </form>
-            </div>
+                </div>
+
+                <div class="flex justify-between pt-5">
+                    <a href="{{ url_for('canon.detail', canon_id=canon.id) }}" 
+                       class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                        Назад
+                    </a>
+                    <button type="submit" 
+                            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                        {% if chapter %}Зберегти зміни{% else %}Створити главу{% endif %}
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

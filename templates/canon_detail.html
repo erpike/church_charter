@@ -5,47 +5,84 @@
 {% block title %}{{ canon.name }} - Послідування{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-12">
-        {{ breadcrumb([
-            {'text': 'Канони', 'url': url_for('index')},
-            {'text': canon.name}
-        ]) }}
+<div class="bg-white shadow overflow-hidden sm:rounded-lg">
+    <div class="px-4 py-5 sm:px-6">
+        <nav class="flex" aria-label="Breadcrumb">
+            <ol class="flex items-center space-x-4">
+                <li>
+                    <div>
+                        <a href="{{ url_for('index') }}" class="text-gray-400 hover:text-gray-500">
+                            Канони
+                        </a>
+                    </div>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <svg class="flex-shrink-0 h-5 w-5 text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                            <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
+                        </svg>
+                        <span class="ml-4 text-sm font-medium text-gray-500" aria-current="page">
+                            {{ canon.name }}
+                        </span>
+                    </div>
+                </li>
+            </ol>
+        </nav>
+    </div>
 
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h1>{{ canon.name }}</h1>
-            <div class="btn-group">
-                <a href="{{ url_for('canon.download_docx', canon_id=canon.id) }}" class="btn btn-success">
-                    Завантажити як DOCX
-                </a>
-                {% if current_user.is_authenticated %}
-                <a href="{{ url_for('chapter.create', canon_id=canon.id) }}" class="btn btn-primary edit-mode-only" style="display: none;">
-                    Додати главу
-                </a>
-                <button id="toggleEditMode" class="btn btn-primary">
-                    Редагувати
-                </button>
-                {% endif %}
+    <div class="border-t border-gray-200">
+        <div class="px-4 py-5 sm:px-6">
+            <div class="flex justify-between items-center">
+                <h1 class="text-2xl font-bold text-gray-900">{{ canon.name }}</h1>
+                <div class="space-x-3">
+                    <a href="{{ url_for('canon.download_docx', canon_id=canon.id) }}" 
+                       class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                        Завантажити як DOCX
+                    </a>
+                    {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('chapter.create', canon_id=canon.id) }}" 
+                       class="edit-mode-only hidden inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                        Додати главу
+                    </a>
+                    <button id="toggleEditMode" 
+                            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                        Редагувати
+                    </button>
+                    {% endif %}
+                </div>
             </div>
-        </div>
 
-        {% if content %}
-            <div class="list-group" id="chapters-container">
+            {% if content %}
+            <div class="mt-6 space-y-4" id="chapters-container">
                 {% for group, chapters in content.items() %}
                     {% for chapter_data in chapters %}
-                        <div class="chapter-item" data-id="{{ chapter_data.chapter.id }}">
-                            <div class="list-group-item">
+                        <div class="chapter-item bg-white rounded-lg shadow" data-id="{{ chapter_data.chapter.id }}">
+                            <div class="p-4">
                                 {{ canon_chapter(chapter_data.chapter, current_user.is_authenticated) }}
                             </div>
                         </div>
                     {% endfor %}
                 {% endfor %}
             </div>
-        {% else %}
-            <div class="alert alert-info">
-                Немає глав у цьому каноні.
+            {% else %}
+            <div class="mt-6">
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-blue-700">
+                                Немає глав у цьому каноні.
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
-        {% endif %}
+            {% endif %}
+        </div>
     </div>
 </div>
 {% endblock %}

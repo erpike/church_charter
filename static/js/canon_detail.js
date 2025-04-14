@@ -6,12 +6,19 @@ document.addEventListener('DOMContentLoaded', function() {
     toggleEditModeBtn.addEventListener('click', function() {
         isEditMode = !isEditMode;
         toggleEditModeBtn.textContent = isEditMode ? 'Завершити редагування' : 'Редагувати';
-        toggleEditModeBtn.classList.toggle('btn-primary');
-        toggleEditModeBtn.classList.toggle('btn-info');
+        
+        // Toggle button appearance
+        if (isEditMode) {
+            toggleEditModeBtn.classList.remove('bg-primary', 'hover:bg-primary-dark');
+            toggleEditModeBtn.classList.add('bg-blue-500', 'hover:bg-blue-600');
+        } else {
+            toggleEditModeBtn.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+            toggleEditModeBtn.classList.add('bg-primary', 'hover:bg-primary-dark');
+        }
         
         // Toggle visibility of edit controls
         document.querySelectorAll('.edit-mode-only').forEach(el => {
-            el.style.display = isEditMode ? '' : 'none';
+            el.classList.toggle('hidden');
         });
         
         // Toggle edit-mode class on the container
@@ -58,7 +65,12 @@ document.addEventListener('DOMContentLoaded', function() {
                             console.log('Позиції елементів оновлено');
                         } else {
                             console.error('Помилка оновлення позицій елементів');
+                            // Можливо, додати повідомлення про помилку тут
                         }
+                    })
+                    .catch(error => {
+                        console.error('Помилка при оновленні позицій:', error);
+                        // Можливо, додати повідомлення про помилку тут
                     });
                 }
             });
