@@ -1,4 +1,4 @@
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask import Blueprint, flash, redirect, render_template, request, session, url_for
 from flask_login import (
     LoginManager,
     current_user,
@@ -70,4 +70,5 @@ def login():
 @login_required
 def logout():
     logout_user()
+    session.clear()  # Clear all session data including flash messages
     return redirect(url_for("index"))
